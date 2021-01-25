@@ -33,6 +33,16 @@ public class SpringbootRabbitmqApplicationTests {
 				log.info("【发送失败】:{},消息异常:{}",correlationData,s);
 			}
 		});
+
+		//设置消息返回
+		rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) ->{
+			log.info("被退回的消息为：{}", message);
+			log.info("replyCode：{}", replyCode);
+			log.info("replyText：{}", replyText);
+			log.info("exchange：{}", exchange);
+			log.info("routingKey：{}", routingKey);
+		});
+
 	}
 
 	/**

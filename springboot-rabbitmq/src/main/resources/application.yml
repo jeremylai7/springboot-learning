@@ -4,4 +4,9 @@ spring:
     port: 5672
     username: admin
     password: 123456
+    #消息确认机制
     publisher-confirms: true
+    #打开消息返回
+    publisher-returns: true
+    template:
+      mandatory: true
