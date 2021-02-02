@@ -16,10 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class MqReceiver {
 
-	private static String EXCHANGE = "myExchange";
-
-	private static String ORDER_EXCHANGE = "orderExchange";
-
 	//1、需要手动创建队列
 	//@RabbitListener(queues = "myQueue")
 	//2、队列不存在自动创建队列
@@ -30,7 +26,7 @@ public class MqReceiver {
 			exchange = @Exchange("myExchange")
 	))
 	public void process(String message) {
-		log.info("messsage: {}",message);
+		log.info("【消息接收】messsage: {}",message);
 	}
 
 
@@ -44,7 +40,7 @@ public class MqReceiver {
 			value = @Queue("orderQueue")
 	))
 	public void computProcess(String message){
-		log.info("this comput receiver msg: {}",message);
+		log.info("【消息接收】 this comput receiver msg: {}",message);
 	}
 
 	@RabbitListener(bindings = @QueueBinding(
@@ -53,7 +49,7 @@ public class MqReceiver {
 			value = @Queue("fruitQueue")
 	))
 	public void fruitProcess(String message) {
-		log.info("this fruit receiver msg: {}",message);
+		log.info("【消息接收】 this fruit receiver msg: {}",message);
 	}
 
 }
