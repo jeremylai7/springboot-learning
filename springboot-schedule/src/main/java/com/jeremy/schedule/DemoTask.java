@@ -17,5 +17,6 @@ public class DemoTask {
 	public void test() {
 		Date date = new Date();
 		System.out.println("hello" + date);
+
 	}*/
 }
