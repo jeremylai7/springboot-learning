@@ -28,14 +28,21 @@ public class DynamicCronHandler implements SchedulingConfigurer {
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
 		scheduledTaskRegistrar.addTriggerTask(()->{
-			Date date = new Date();
-			System.out.println("执行任务....." + date);
+			runTask();
 		},triggerContext -> {
 			//刷新cron
 			CronTrigger cronTrigger = new CronTrigger(taskCron);
 			Date nextExecDate = cronTrigger.nextExecutionTime(triggerContext);
 			return nextExecDate;
 		});
+	}
+
+	/**
+	 * 执行任务的方法
+	 */
+	private void runTask() {
+		Date date = new Date();
+		System.out.println("执行任务....." + date);
 	}
 
 	public DynamicCronHandler taskCron(String taskCron) {
