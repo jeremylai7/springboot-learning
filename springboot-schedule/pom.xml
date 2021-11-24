@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jeremy</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>springboot-schedule</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>demo</name>
+	<name>springboot-schedule</name>
 	<description>Spring Boot Schedule</description>
 	<properties>
 		<java.version>1.8</java.version>
