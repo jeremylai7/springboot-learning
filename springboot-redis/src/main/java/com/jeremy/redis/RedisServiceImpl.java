@@ -1,6 +1,7 @@
 package com.jeremy.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -31,5 +32,20 @@ public class RedisServiceImpl implements RedisService{
 	@Override
 	public String get(String key) {
 		return redisTemplate.opsForValue().get(key);
+	}
+
+	@Override
+	public void hset(String key, String hashKey,String value) {
+		redisTemplate.opsForHash().put(key,hashKey,value);
+	}
+
+	@Override
+	public void hset(String key, String hashKey,String value, long timeout) {
+		redisTemplate.opsForHash().put(key,hashKey,value);
+	}
+
+	@Override
+	public String hget(String key, String hashKey) {
+		return (String) redisTemplate.opsForHash().get(key,hashKey);
 	}
 }

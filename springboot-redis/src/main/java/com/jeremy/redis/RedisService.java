@@ -28,4 +28,11 @@ public interface RedisService {
 	 * @return
 	 */
 	String get(String key);
+
+	void hset(String key,String hashKey, String value);
+
+	void hset(String key,String hashKey, String value,long timeout);
+
+
+	String hget(String key, String hashKey);
 }
