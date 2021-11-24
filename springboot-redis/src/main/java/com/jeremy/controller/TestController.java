@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @Author: laizc
  * @Date: Created in  2021-11-24
@@ -40,22 +44,35 @@ public class TestController {
 		User user = new User();
 		user.setName(name);
 		user.setPassword(password);
-		redisService.hset(key,hashKey, JSON.toJSONString(user));
-	}
-
-	@PostMapping("/set-hash-timeout")
-	public void setHash(String key,String hashKey,String name,String password,long timeout) {
-		User user = new User();
-		user.setName(name);
-		user.setPassword(password);
-		redisService.hset(key,hashKey, JSON.toJSONString(user),timeout);
+		redisService.hSet(key,hashKey, JSON.toJSONString(user));
 	}
 
 	@GetMapping("/get-hash")
 	public String getHash(String key,String hashKey) {
-		String value = redisService.hget(key,hashKey);
+		String value = redisService.hGet(key,hashKey);
 		return value;
 	}
 
+	@GetMapping("/get-all-hash")
+	public String getAllHash(String key) {
+		Map<Object,Object> map = redisService.hGetAll(key);
+		return JSON.toJSONString(map);
+	}
 
+	@PostMapping("/lpush")
+	public void lPush(String key,String value) {
+		redisService.lPush(key,value);
+	}
+
+	@GetMapping("/lrange")
+	public List<String> lRange(String key,long start,long end) {
+		List<String> list = redisService.lRange(key,start,end);
+		return list;
+	}
+
+	@GetMapping("/lrange-all")
+	public List<String> lRangeAll(String key,long start,long end) {
+		List<String> list = redisService.lRange(key,0,-1);
+		return list;
+	}
 }

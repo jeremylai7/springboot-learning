@@ -1,12 +1,16 @@
 package com.jeremy.redis;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @Author: laizc
  * @Date: Created in  2021-11-24
  * @desc:
  */
 public interface RedisService {
-
+	//string
 	/**
 	 * 设置不过期的string值
 	 * @param key     键
@@ -29,10 +33,48 @@ public interface RedisService {
 	 */
 	String get(String key);
 
-	void hset(String key,String hashKey, String value);
+	//hash
+	/**
+	 * 将哈希表 key 中的字段 hashKey 的值设为 value ，过期时间为不过期
+	 * @param key        键
+	 * @param hashKey    hash键
+	 * @param value      值
+	 */
+	void hSet(String key, String hashKey, String value);
 
-	void hset(String key,String hashKey, String value,long timeout);
+	/**
+	 * 获取哈希表指定字段的值
+	 * @param key        键
+	 * @param hashKey   hash键
+	 * @return
+	 */
+	String hGet(String key, String hashKey);
 
+	/**
+	 * 是否存在哈希表指定的字段
+	 * @param key       键
+	 * @param hashKey  hash键
+	 * @return
+	 */
+	boolean hExist(String key,String hashKey);
 
-	String hget(String key, String hashKey);
+	/**
+	 * 删除哈希指定的字段
+	 * @param key      键
+	 * @param hashKey  hash键
+	 */
+	void hDelete(String key,String... hashKey);
+
+	/**
+	 * 获取指定key 所有的字段和值
+	 * @param key
+	 * @return
+	 */
+	Map<Object,Object> hGetAll(String key);
+
+	//list
+	void lPush(String key,String value);
+
+	List<String> lRange(String key, long start, long end);
+
 }

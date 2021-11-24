@@ -1,10 +1,11 @@
 package com.jeremy.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,17 +36,41 @@ public class RedisServiceImpl implements RedisService{
 	}
 
 	@Override
-	public void hset(String key, String hashKey,String value) {
+	public void hSet(String key, String hashKey, String value) {
 		redisTemplate.opsForHash().put(key,hashKey,value);
 	}
 
 	@Override
-	public void hset(String key, String hashKey,String value, long timeout) {
-		redisTemplate.opsForHash().put(key,hashKey,value);
-	}
-
-	@Override
-	public String hget(String key, String hashKey) {
+	public String hGet(String key, String hashKey) {
 		return (String) redisTemplate.opsForHash().get(key,hashKey);
 	}
+
+	@Override
+	public boolean hExist(String key, String hashKey) {
+		return redisTemplate.opsForHash().hasKey(key,hashKey);
+	}
+
+	@Override
+	public void hDelete(String key, String... hashKey) {
+		redisTemplate.opsForHash().delete(key,hashKey);
+	}
+
+	@Override
+	public Map<Object,Object> hGetAll(String key) {
+		Map<Object,Object> map = redisTemplate.opsForHash().entries(key);
+		return map;
+	}
+
+	@Override
+	public void lPush(String key,String value) {
+		redisTemplate.opsForList().leftPush(key,value);
+	}
+
+	@Override
+	public List<String> lRange(String key, long start, long end) {
+		List<String> list = redisTemplate.opsForList().range(key,start,end);
+		return list;
+	}
+
+
 }
