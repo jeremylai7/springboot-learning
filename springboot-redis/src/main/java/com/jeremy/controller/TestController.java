@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @Author: laizc
@@ -75,4 +74,11 @@ public class TestController {
 		List<String> list = redisService.lRange(key,0,-1);
 		return list;
 	}
+
+	@PostMapping("/delete")
+	public boolean delete(String key) {
+		return redisService.delete(key);
+	}
+
+
 }

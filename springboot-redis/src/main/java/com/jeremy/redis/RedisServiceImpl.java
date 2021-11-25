@@ -72,5 +72,10 @@ public class RedisServiceImpl implements RedisService{
 		return list;
 	}
 
+	@Override
+	public boolean delete(String key) {
+		return redisTemplate.delete(key);
+	}
+
 
 }

@@ -2,7 +2,6 @@ package com.jeremy.redis;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @Author: laizc
@@ -76,6 +75,8 @@ public interface RedisService {
 	void lPush(String key,String value);
 
 	List<String> lRange(String key, long start, long end);
+
+	boolean delete(String key);
 
 
 
