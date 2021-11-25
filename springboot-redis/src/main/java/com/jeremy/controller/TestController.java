@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author: laizc
@@ -108,6 +109,34 @@ public class TestController {
 	@GetMapping("/ssize")
 	public long sSize(String key) {
 		return redisService.sSize(key);
+	}
+
+	@GetMapping("/s-members")
+	public Set<String> sMembers(String key) {
+		Set<String> set = redisService.sMembers(key);
+		return set;
+	}
+
+	@PostMapping("/zs-add")
+	public void zsAdd(String key,String value,double score) {
+		redisService.zsAdd(key,value,score);
+	}
+
+	@GetMapping("/zs-size")
+	public long zsSize(String key) {
+		long size = redisService.zsSize(key);
+		return size;
+	}
+
+	@GetMapping("/zs-range")
+	public Set<String> zsRange(String key,long start,long end) {
+		Set<String> set = redisService.zsRange(key,start,end);
+		return set;
+	}
+
+	@PostMapping("/zs-add-score")
+	public double zsAddScore(String key,String value,double score) {
+		return redisService.zsAddScore(key,value,score);
 	}
 
 }

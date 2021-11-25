@@ -2,6 +2,7 @@ package com.jeremy.redis;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author: laizc
@@ -151,7 +152,94 @@ public interface RedisService {
 	 */
 	long sSize(String key);
 
+	/**
+	 * 获取set所有的值
+	 * @param key
+	 * @return
+	 */
+	Set<String> sMembers(String key);
+
+	/**
+	 * set 中是否存在 value
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	boolean sExistMember(String key, String value);
+
+	/**
+	 * 移除 set 中的value 元素
+	 * @param key
+	 * @param value
+	 */
+	void sRemove(String key,String... value);
+
+	//sort set
+
+	/**
+	 * 向有序集合添加元素或者更新已存在的元素的分数
+	 * @param key        键
+	 * @param value      值
+	 * @param score      分数
+	 */
+	void zsAdd(String key, String value, double score);
+
+	/**
+	 * 获取有序集合元素个数
+	 * @param key
+	 * @return
+	 */
+	long zsSize(String key);
+
+	/**
+	 * 获取下标内的有序集合
+	 * @param key     键
+	 * @param start   起始下标
+	 * @param end     结算下标  -1 表示最后一个成员， -2 表示倒数第二个成员
+	 * @return
+	 */
+	Set<String> zsRange(String key, long start, long end);
 
 
+	/**
+	 * 获取有序集合分数段内的元素
+	 * @param key     键
+	 * @param min     分数最小值
+	 * @param max     分数最大值
+	 * @return
+	 */
+	Set<String> zsRangeByScore(String key,double min,double max);
 
+	/**
+	 * 获取分数区级内的元素个数
+	 * @param key     键
+	 * @param min     分数最小值
+	 * @param max     分数最大值
+	 * @return        元素个数
+	 */
+	long zsCount(String key,double min,double max);
+
+	/**
+	 * 在指定的元素上添加增量分数
+	 * @param key     键
+	 * @param value   值
+	 * @param score   分数，负数表示减
+	 * @return         添加分数后的分数
+	 */
+	double zsAddScore(String key,String value,double score);
+
+	/**
+	 * 移除有序集合指定名称元素
+	 * @param key       键
+	 * @param value     值
+	 */
+	void zsRemove(String key,String... value);
+
+	/**
+	 * 移除有序集合 分数内的元素
+	 * @param key       键
+	 * @param min       分数的最小值，默认使用闭区间（大于等于），也可以使用开区间（大于），使用(表示，egg (5 表示大于5
+	 * @param max       分数的最大值，默认使用闭区间（小于等于），也可以使用开区间（小于），使用(表示，egg (10 表示小于10
+	 */
+	void zsRemoveByScore(String key,double min,double max);
 }
