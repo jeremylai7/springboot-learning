@@ -128,6 +128,28 @@ public interface RedisService {
 	 */
 	void lRemove(String key,long count,String value);
 
+	//set
+
+	/**
+	 * set 添加单个元素
+	 * @param key      键
+	 * @param value    值
+	 */
+	void sAddAll(String key, String value);
+
+	/**
+	 * set 添加多个元素
+	 * @param key      键
+	 * @param value    值，多个用,隔开,egg:1,2,3
+	 */
+	void sAddAll(String key, String ... value);
+
+	/**
+	 * 获取 set 集合数量
+	 * @param key
+	 * @return
+	 */
+	long sSize(String key);
 
 
 

@@ -85,9 +85,29 @@ public class TestController {
 		return redisService.delete(key);
 	}
 
-	@PostMapping("lremove")
+	@PostMapping("/lremove")
 	public void lRemove(String key,long count,String value) {
 		redisService.lRemove(key,count,value);
+	}
+
+	@PostMapping("/sadd")
+	public void sAdd(String key,String value) {
+		redisService.sAddAll(key,value);
+	}
+
+	/**
+	 *
+	 * @param key
+	 * @param value  多个value 用逗号隔开 egg: 1,2,3,4
+	 */
+	@PostMapping("/s-add-all")
+	public void sAddAll(String key,String... value) {
+		redisService.sAddAll(key,value);
+	}
+
+	@GetMapping("/ssize")
+	public long sSize(String key) {
+		return redisService.sSize(key);
 	}
 
 }

@@ -98,5 +98,20 @@ public class RedisServiceImpl implements RedisService{
 		redisTemplate.opsForList().remove(key,count,value);
 	}
 
+	@Override
+	public void sAddAll(String key, String value) {
+		redisTemplate.opsForSet().add(key,value);
+	}
+
+	@Override
+	public void sAddAll(String key, String... value) {
+		redisTemplate.opsForSet().add(key,value);
+	}
+
+	@Override
+	public long sSize(String key) {
+		return redisTemplate.opsForSet().size(key);
+	}
+
 
 }
