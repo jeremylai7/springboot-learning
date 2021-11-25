@@ -77,4 +77,6 @@ public interface RedisService {
 
 	List<String> lRange(String key, long start, long end);
 
+
+
 }

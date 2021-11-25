@@ -71,7 +71,7 @@ public class TestController {
 	}
 
 	@GetMapping("/lrange-all")
-	public List<String> lRangeAll(String key,long start,long end) {
+	public List<String> lRangeAll(String key) {
 		List<String> list = redisService.lRange(key,0,-1);
 		return list;
 	}
