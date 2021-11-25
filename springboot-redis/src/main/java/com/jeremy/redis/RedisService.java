@@ -9,6 +9,14 @@ import java.util.Map;
  * @desc:
  */
 public interface RedisService {
+
+	/**
+	 * 删除 key
+	 * @param key 键
+	 * @return    是否删除成功，失败一般是key不存在
+	 */
+	boolean delete(String key);
+
 	//string
 	/**
 	 * 设置不过期的string值
@@ -71,12 +79,56 @@ public interface RedisService {
 	 */
 	Map<Object,Object> hGetAll(String key);
 
-	//list
-	void lPush(String key,String value);
 
+	//list
+
+	/**
+	 * 从列表头部添加元素
+	 * @param key     键
+	 * @param value   值
+	 */
+	void lLeftPush(String key, String value);
+
+	/**
+	 * 从列表尾部添加元素
+	 * @param key     键
+	 * @param value   值
+	 */
+	void lRightPush(String key,String value);
+
+	/**
+	 * 从列表头部删除元素
+	 * @param key     键
+	 */
+	void lLeftPop(String key);
+
+	/**
+	 * 从列表尾部删除元素，并返回删除元素
+	 * @param key    键
+	 */
+	String lRightPop(String key);
+
+	/**
+	 * 获取列表值
+	 * @param key      键
+	 * @param start    起始
+	 * @param end      结束  -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素
+	 * @return
+	 */
 	List<String> lRange(String key, long start, long end);
 
-	boolean delete(String key);
+	/**
+	 * 根据 count 值，移除列表中与参数 value 相等的元素
+	 * @param key      键
+	 * @param count   count > 0,从列表头部向尾部搜索，移除与 value 相等的元素，数量为 count
+	 *                 count < 0,从列表尾部向头部搜索，移除与 value 相等的元素，数量为count 的绝对值
+	 *                 count = 0，移除列表中所有与value 相等的元素
+	 *
+	 * @param value   值
+	 */
+	void lRemove(String key,long count,String value);
+
+
 
 
 

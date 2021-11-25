@@ -58,9 +58,14 @@ public class TestController {
 		return JSON.toJSONString(map);
 	}
 
-	@PostMapping("/lpush")
+	@PostMapping("/l-left-push")
 	public void lPush(String key,String value) {
-		redisService.lPush(key,value);
+		redisService.lLeftPush(key,value);
+	}
+
+	@PostMapping("/l-right-pop")
+	public String lRightPop(String key) {
+		return redisService.lRightPop(key);
 	}
 
 	@GetMapping("/lrange")
@@ -80,5 +85,9 @@ public class TestController {
 		return redisService.delete(key);
 	}
 
+	@PostMapping("lremove")
+	public void lRemove(String key,long count,String value) {
+		redisService.lRemove(key,count,value);
+	}
 
 }

@@ -21,6 +21,11 @@ public class RedisServiceImpl implements RedisService{
 	private StringRedisTemplate redisTemplate;
 
 	@Override
+	public boolean delete(String key) {
+		return redisTemplate.delete(key);
+	}
+
+	@Override
 	public void set(String key, String value) {
 		redisTemplate.opsForValue().set(key,value);
 	}
@@ -62,8 +67,24 @@ public class RedisServiceImpl implements RedisService{
 	}
 
 	@Override
-	public void lPush(String key,String value) {
+	public void lLeftPush(String key, String value) {
 		redisTemplate.opsForList().leftPush(key,value);
+	}
+
+	@Override
+	public void lRightPush(String key, String value) {
+		redisTemplate.opsForList().rightPush(key,value);
+	}
+
+	@Override
+	public void lLeftPop(String key) {
+		redisTemplate.opsForList().leftPop(key);
+	}
+
+	@Override
+	public String lRightPop(String key) {
+		String lastValue = redisTemplate.opsForList().rightPop(key);
+		return lastValue;
 	}
 
 	@Override
@@ -73,8 +94,8 @@ public class RedisServiceImpl implements RedisService{
 	}
 
 	@Override
-	public boolean delete(String key) {
-		return redisTemplate.delete(key);
+	public void lRemove(String key, long count, String value) {
+		redisTemplate.opsForList().remove(key,count,value);
 	}
 
 
