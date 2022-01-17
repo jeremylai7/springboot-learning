@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.dao.UserDao">
+    <resultMap id="BaseResultMap" type="com.test.model.User">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="age" property="age" jdbcType="INTEGER"/>
+        <result column="submit_time" property="submitTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,name,age,submit_time
+    </sql>
+    <select id="selectByPrimary" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <insert id="insert" parameterType="com.test.model.User">
+        insert into t_user (id,name,age,submit_time)
+        values (#{id,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},#{age,jdbcType=INTEGER},#{submitTime,jdbcType=TIMESTAMP})
+    </insert>
+
+
+</mapper>
