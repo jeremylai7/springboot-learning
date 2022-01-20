@@ -21,5 +21,41 @@
         values (#{id,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},#{age,jdbcType=INTEGER},#{submitTime,jdbcType=TIMESTAMP})
     </insert>
 
+    <update id="updateByPrimaryKeySelective" parameterType="com.test.model.User" >
+        update t_user
+        <set >
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null" >
+                age = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="submitTime != null" >
+                submit_time = #{submitTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByNameSelective"  parameterType="com.test.model.User" >
+        update t_user
+        <set >
+            <if test="age != null" >
+                age = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="submitTime != null" >
+                submit_time = #{submitTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where name = #{name,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.test.model.User" >
+        update t_user
+        set name = #{name,jdbcType=VARCHAR},
+        age = #{age,jdbcType=INTEGER},
+        submit_time = #{submitTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
 </mapper>

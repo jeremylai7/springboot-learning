@@ -13,4 +13,10 @@ public interface UserDao {
 
     void insert(User user);
 
+    void updateByPrimaryKeySelective(User user);
+
+    void updateByNameSelective(User user);
+
+    void updateByPrimaryKey(User user);
+
 }
