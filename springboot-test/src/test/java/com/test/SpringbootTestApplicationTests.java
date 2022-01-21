@@ -35,6 +35,11 @@ class SpringbootTestApplicationTests {
         mainService.mainTest1_1("required_1");
     }
 
+    @Test
+    void required_2() throws Exception {
+        mainService.mainTest1_2("required_2");
+    }
+
     /**
      * support
      */

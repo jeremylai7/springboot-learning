@@ -40,6 +40,13 @@ public class MainService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void mainTest1_2(String name) throws Exception {
+        aService.A(name);
+        childService.childTest1_2(name);
+    }
+
+
     public void mainTest2(String support) throws Exception {
         aService.A(support);
         childService.childTest2(support);

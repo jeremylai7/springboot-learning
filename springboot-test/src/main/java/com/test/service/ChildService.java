@@ -33,6 +33,13 @@ public class ChildService {
         }
     }
 
+    public void childTest1_2(String name) throws Exception {
+        bService.B(name);
+        if (true) {
+            throw new Exception();
+        }
+    }
+
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.SUPPORTS)
     public void childTest2(String name) throws Exception {
         bService.B(name);
