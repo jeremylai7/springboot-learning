@@ -19,12 +19,12 @@ public class MqReceiver {
 	//1、需要手动创建队列
 	//@RabbitListener(queues = "myQueue")
 	//2、队列不存在自动创建队列
-	//@RabbitListener(queuesToDeclare = @Queue("myQueues"))
+	@RabbitListener(queuesToDeclare = @Queue("myQueuess"))
 	//3、自动创建, Exchange和Queue绑定
-	@RabbitListener(bindings = @QueueBinding(
+	/*@RabbitListener(bindings = @QueueBinding(
 			value = @Queue("myQueuess"),
 			exchange = @Exchange("myExchange")
-	))
+	))*/
 	public void process(String message) {
 		log.info("【消息接收】messsage: {}",message);
 	}
@@ -50,6 +50,12 @@ public class MqReceiver {
 	))
 	public void fruitProcess(String message) {
 		log.info("【消息接收】 this fruit receiver msg: {}",message);
+	}
+
+
+	@RabbitListener(queues = DelayQueueRabbitConfig.DLX_QUEUE)
+	public void delayMQReciever(String message) {
+		log.info("【消息接收】:{}",message);
 	}
 
 }
