@@ -1,6 +1,9 @@
 package com.jeremy.config;
 
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.CustomExchange;
+import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +34,7 @@ public class XDelayedMessageConfig {
 
 	@Bean
 	public Queue directQueue() {
-		return QueueBuilder.durable(DIRECT_QUEUE).build();
+		return new Queue(DIRECT_QUEUE,true);
 	}
 
 	/**
@@ -40,7 +43,7 @@ public class XDelayedMessageConfig {
 	 * @return
 	 */
 	@Bean
-	public Exchange delayedExchange() {
+	public CustomExchange delayedExchange() {
 		Map<String,Object> map = new HashMap<>();
 		map.put("x-delayed-type","direct");
 		return new CustomExchange(DELAYED_EXCHANGE,"x-delayed-message",true,false,map);
@@ -48,7 +51,7 @@ public class XDelayedMessageConfig {
 
 	@Bean
 	public Binding delayOrderBinding() {
-		return new Binding(DIRECT_QUEUE,Binding.DestinationType.QUEUE,DELAYED_EXCHANGE,ROUTING_KEY,null);
+		return BindingBuilder.bind(directQueue()).to(delayedExchange()).with(ROUTING_KEY).noargs();
 	}
 
 }
