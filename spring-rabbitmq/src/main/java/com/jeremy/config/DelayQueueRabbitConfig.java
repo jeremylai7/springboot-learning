@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * @Author: laizc
  * @Date: Created in  2022-04-15
- * @desc: 延迟队列配置
+ * @desc: 死信队列
  */
 @Configuration
 public class DelayQueueRabbitConfig {
@@ -101,42 +101,5 @@ public class DelayQueueRabbitConfig {
 	public Binding orderBinding() {
 		return BindingBuilder.bind(orderQueue()).to(orderExchange()).with(ORDER_ROUTING_KEY);
 	}
-
-	/**
-	 * 队列
-	 */
-	public static final String DIRECT_QUEUE = "queue.direct";
-
-	/**
-	 * 延迟交换机
-	 */
-	public static final String DELAYED_EXCHANGE = "exchange.delayed";
-
-	/**
-	 * 绑定的routing key
-	 */
-	public static final String ROUTING_KEY = "routingKey.bind";
-
-/*	@Bean
-	public Queue directQueue() {
-		return new Queue(DIRECT_QUEUE,true);
-	}
-
-	*//**
-	 * 定义延迟交换机
-	 * @return
-	 *//*
-	@Bean
-	public CustomExchange delayedExchange() {
-		Map<String,Object> map = new HashMap<>();
-		map.put("x-delayed-type","direct");
-		return new CustomExchange(DELAYED_EXCHANGE,"x-delayed-message",true,false,map);
-	}
-
-	@Bean
-	public Binding orderBinding2() {
-		return BindingBuilder.bind(directQueue()).to(delayedExchange()).with(ROUTING_KEY).noargs();
-	}*/
-
 
 }

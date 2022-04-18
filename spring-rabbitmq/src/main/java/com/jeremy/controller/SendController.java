@@ -1,8 +1,8 @@
 package com.jeremy.controller;
 
 import com.jeremy.config.DelayQueueRabbitConfig;
+import com.jeremy.config.XDelayedMessageConfig;
 import com.jeremy.util.DateUtil;
-import org.omg.CORBA.StringHolder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,10 +38,10 @@ public class SendController {
      */
     @GetMapping("/dlx")
     public String dlx() {
-        dlxSend("延迟2 秒","2000");
-        dlxSend("延迟5 秒","5000");
-        dlxSend("延迟10秒","10000");
-        return "ok";
+	    dlxSend("延迟2 秒","2000");
+	    dlxSend("延迟5 秒","5000");
+	    dlxSend("延迟10秒","10000");
+	    return "ok";
     }
 
     private void dlxSend(String message,String delayTime) {
@@ -60,18 +60,18 @@ public class SendController {
      */
     @GetMapping("/delay")
     public String delay() {
-        delaySend("延迟队列2 秒","2000");
-        delaySend("延迟队列5 秒","5000");
-        delaySend("延迟队列10 秒","10000");
+	    delaySend("延迟队列10 秒","10000");
+	    delaySend("延迟队列5 秒","5000");
+	    delaySend("延迟队列2 秒","2000");
         return "ok";
     }
 
     private void delaySend(String message,String delayTime) {
         message = message + " " + DateUtil.dateFormat(new Date());
         System.out.println("【发送消息】" + message);
-        rabbitTemplate.convertAndSend(DelayQueueRabbitConfig.DELAYED_EXCHANGE,DelayQueueRabbitConfig.ROUTING_KEY,
+        rabbitTemplate.convertAndSend(XDelayedMessageConfig.DELAYED_EXCHANGE,XDelayedMessageConfig.ROUTING_KEY,
                 message, message1 -> {
-                    message1.getMessageProperties().setExpiration(delayTime);
+                    message1.getMessageProperties().setHeader("x-delay",delayTime);
                     return message1;
                 });
     }

@@ -5,8 +5,6 @@ import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import java.sql.Time;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -34,10 +32,10 @@ public class MessageReceiver {
     public void delayPrecss(String message) throws InterruptedException {
         System.out.println("【接收消息】" + message + " 当前时间" + DateUtil.dateFormat(new Date()));
         //接收后数据库查询，延迟五秒
-        Thread.sleep(5000);
-    }
+        //Thread.sleep(5000);
+}
 
-    //@RabbitListener(queues = DelayQueueRabbitConfig.DIRECT_QUEUE)
+    @RabbitListener(queues = XDelayedMessageConfig.DIRECT_QUEUE)
     public void delayProcess(String message) {
         System.out.println("【接收消息】" + message + " 当前时间" + DateUtil.dateFormat(new Date()));
     }
