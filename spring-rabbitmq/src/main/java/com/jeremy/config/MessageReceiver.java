@@ -37,7 +37,7 @@ public class MessageReceiver {
         Thread.sleep(5000);
     }
 
-    @RabbitListener(queues = DelayQueueRabbitConfig.DIRECT_QUEUE)
+    //@RabbitListener(queues = DelayQueueRabbitConfig.DIRECT_QUEUE)
     public void delayProcess(String message) {
         System.out.println("【接收消息】" + message + " 当前时间" + DateUtil.dateFormat(new Date()));
     }

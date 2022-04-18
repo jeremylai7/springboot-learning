@@ -117,15 +117,15 @@ public class DelayQueueRabbitConfig {
 	 */
 	public static final String ROUTING_KEY = "routingKey.bind";
 
-	@Bean
+/*	@Bean
 	public Queue directQueue() {
 		return new Queue(DIRECT_QUEUE,true);
 	}
 
-	/**
+	*//**
 	 * 定义延迟交换机
 	 * @return
-	 */
+	 *//*
 	@Bean
 	public CustomExchange delayedExchange() {
 		Map<String,Object> map = new HashMap<>();
@@ -136,7 +136,7 @@ public class DelayQueueRabbitConfig {
 	@Bean
 	public Binding orderBinding2() {
 		return BindingBuilder.bind(directQueue()).to(delayedExchange()).with(ROUTING_KEY).noargs();
-	}
+	}*/
 
 
 }
