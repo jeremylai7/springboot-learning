@@ -44,18 +44,18 @@ public class Topic {
 
     @Bean
     public Binding topicFirstBind() {
-        // first 为结尾
-        return BindingBuilder.bind(topicFirstQueue()).to(topicExchange()).with("#first#");
+        // .com 为结尾
+        return BindingBuilder.bind(topicFirstQueue()).to(topicExchange()).with("#.com");
     }
 
     @Bean
     public Binding topicSecondBind() {
-        return BindingBuilder.bind(topicSecondQueue()).to(topicExchange()).with("secondtopicBind");
+        return BindingBuilder.bind(topicSecondQueue()).to(topicExchange()).with("*.cn");
     }
 
     @Bean
     public Binding topicThirdBind() {
-        return BindingBuilder.bind(topicThirdQueue()).to(topicExchange()).with("thirdtopicBind");
+        return BindingBuilder.bind(topicThirdQueue()).to(topicExchange()).with("www.#");
     }
 
     /**

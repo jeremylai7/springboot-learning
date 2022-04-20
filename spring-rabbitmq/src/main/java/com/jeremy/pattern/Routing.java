@@ -83,6 +83,8 @@ public class Routing {
     public String routingFirst() {
         // 使用不同的routingKey 转发到不同的队列
         rabbitTemplate.convertAndSend("routingExchange","firstRoutingBind"," first routing message");
+        rabbitTemplate.convertAndSend("routingExchange","secondRoutingBind"," first routing message");
+        rabbitTemplate.convertAndSend("routingExchange","ThirdRoutingBind"," first routing message");
         return "ok";
     }
 
