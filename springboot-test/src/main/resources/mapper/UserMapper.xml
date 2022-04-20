@@ -16,12 +16,12 @@
         from t_user
         where id = #{id,jdbcType=BIGINT}
     </select>
-    <insert id="insert" parameterType="com.test.model.User">
+    <insert id="insert" parameterType="com.test.model.User" useGeneratedKeys="true" keyProperty="id">
         insert into t_user (id,name,age,submit_time)
         values (#{id,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},#{age,jdbcType=INTEGER},#{submitTime,jdbcType=TIMESTAMP})
     </insert>
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.test.model.User" >
+    <update id="updateByPrimaryKeySelective" parameterType="com.test.model.User" useGeneratedKeys="true" keyProperty="id">
         update t_user
         <set >
             <if test="name != null" >
