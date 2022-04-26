@@ -29,7 +29,7 @@ public class ThreadPoolController {
 
 	public static void main(String[] args) {
 		int corePoolSize = 1;
-		int maximumPoolSize = 1;
+		int maximumPoolSize = 2;
 		long keepAliveTime = 10;
 		TimeUnit unit = TimeUnit.SECONDS;
 
@@ -43,9 +43,11 @@ public class ThreadPoolController {
 		ThreadFactory threadFactory = Executors.defaultThreadFactory();
 		// 拒绝策略 默认拒绝策略，拒绝任务并抛出任务
 		RejectedExecutionHandler handler = new ThreadPoolExecutor.AbortPolicy();
+		// 触发拒绝策略，会使用调用线程直接运行任务
 		RejectedExecutionHandler handler1 = new ThreadPoolExecutor.CallerRunsPolicy();
-		// 直接拒绝任务，不做任何处理
+		// 直接拒绝任务，不抛出错误
 		RejectedExecutionHandler handler2 = new ThreadPoolExecutor.DiscardPolicy();
+		// 触发拒绝策略，只要还有任务新增，一直会丢弃阻塞队列的最老的任务，并将新的任务加入
 		RejectedExecutionHandler handler3 = new ThreadPoolExecutor.DiscardOldestPolicy();
 
 		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(corePoolSize,
@@ -54,10 +56,14 @@ public class ThreadPoolController {
 				unit,
 				workQueue,
 				threadFactory,
-				handler);
-		for (int i = 0; i < 30; i++) {
+				handler1);
+		for (int i = 0; i < 20; i++) {
 			System.out.println(i);
-			threadPool.execute(new TestRun(i));
+			try {
+				threadPool.execute(new TestRun(i));
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
 
 		}
 
