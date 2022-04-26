@@ -60,7 +60,7 @@ public class ThreadPoolController {
 		for (int i = 0; i < 20; i++) {
 			System.out.println(i);
 			try {
-				threadPool.execute(new TestRun(i));
+				threadPool.execute(new TaskThread(i));
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
@@ -71,11 +71,11 @@ public class ThreadPoolController {
 
 	}
 
-	static class TestRun implements Runnable{
+	static class TaskThread implements Runnable{
 
 		private int i;
 
-		public TestRun(int i) {
+		public TaskThread(int i) {
 			this.i = i;
 		}
 
