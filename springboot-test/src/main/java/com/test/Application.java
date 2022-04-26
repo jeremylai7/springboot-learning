@@ -3,6 +3,7 @@ package com.test;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * @Author: laizc
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @desc:
  */
 @SpringBootApplication
+@EnableAsync
 @MapperScan("com.test.dao")
 public class Application {
 

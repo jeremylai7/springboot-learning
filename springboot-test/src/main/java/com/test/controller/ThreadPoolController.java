@@ -1,0 +1,88 @@
+package com.test.controller;
+
+import com.test.service.ThreadPoolService;
+import org.apache.ibatis.io.ResolverUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.*;
+
+/**
+ * @Author: laizc
+ * @Date: Created in  2022-04-26
+ * @desc: 线程池测试
+ */
+@RestController
+@RequestMapping("/thread-pool")
+public class ThreadPoolController {
+
+	@Autowired
+	private ThreadPoolService threadPoolService;
+
+	@RequestMapping("/async")
+	public String async() {
+		threadPoolService.asyncTest();
+		threadPoolService.noAsyncTest();
+		return "test ok";
+	}
+
+	public static void main(String[] args) {
+		int corePoolSize = 1;
+		int maximumPoolSize = 1;
+		long keepAliveTime = 10;
+		TimeUnit unit = TimeUnit.SECONDS;
+
+		// 无界队列
+		BlockingQueue<Runnable> workQueue1 = new LinkedBlockingDeque<>(10);
+		// 有界队列 遵循 FIFO 原则
+		BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(5);
+		// 有界优先队列队列  优先级由任务中的 Comparator 决定
+		BlockingQueue<Runnable> workQueue2 = new PriorityBlockingQueue<>(10);
+        // 线程工厂
+		ThreadFactory threadFactory = Executors.defaultThreadFactory();
+		// 拒绝策略 默认拒绝策略，拒绝任务并抛出任务
+		RejectedExecutionHandler handler = new ThreadPoolExecutor.AbortPolicy();
+		RejectedExecutionHandler handler1 = new ThreadPoolExecutor.CallerRunsPolicy();
+		// 直接拒绝任务，不做任何处理
+		RejectedExecutionHandler handler2 = new ThreadPoolExecutor.DiscardPolicy();
+		RejectedExecutionHandler handler3 = new ThreadPoolExecutor.DiscardOldestPolicy();
+
+		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(corePoolSize,
+				maximumPoolSize,
+				keepAliveTime,
+				unit,
+				workQueue,
+				threadFactory,
+				handler);
+		for (int i = 0; i < 30; i++) {
+			System.out.println(i);
+			threadPool.execute(new TestRun(i));
+
+		}
+
+
+
+	}
+
+	static class TestRun implements Runnable{
+
+		private int i;
+
+		public TestRun(int i) {
+			this.i = i;
+		}
+
+		@Override
+		public void run() {
+			try {
+				TimeUnit.SECONDS.sleep(1);
+				System.out.println("执行代码" + i);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+}
+
