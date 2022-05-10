@@ -1,7 +1,7 @@
 package com.jeremy.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -47,6 +47,23 @@ public class RabbitConfig {
         });
 
         return rabbitTemplate;
+    }
+
+    @Bean
+    public DirectExchange myExchange3() {
+        DirectExchange directExchange = new DirectExchange("myExchange3");
+        return directExchange;
+    }
+
+    @Bean
+    public Queue myQueue3() {
+        Queue queue = new Queue("myQueue3",true);
+        return queue;
+    }
+
+    @Bean
+    public Binding binding3() {
+        return BindingBuilder.bind(myQueue3()).to(myExchange3()).with("myRoutingKey3");
     }
 
 }

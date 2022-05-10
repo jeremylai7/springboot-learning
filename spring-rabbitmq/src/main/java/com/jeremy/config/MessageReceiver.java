@@ -1,10 +1,12 @@
 package com.jeremy.config;
 
 import com.jeremy.util.DateUtil;
+import com.rabbitmq.client.Channel;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -23,6 +25,17 @@ public class MessageReceiver {
         String time = sdf.format(date);
         System.out.println("【接收信息】" + message + " 当前时间" + time);
     }
+
+    @RabbitListener(queuesToDeclare = @Queue("myQueue3"))
+    public void process3(String message, Channel channel) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        String time = sdf.format(date);
+        System.out.println("【接收信息】" + message + " 当前时间" + time);
+
+    }
+
+
 
     /**
      * 死信队列接收

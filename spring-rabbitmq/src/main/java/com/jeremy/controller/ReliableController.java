@@ -1,7 +1,6 @@
 package com.jeremy.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +22,12 @@ public class ReliableController {
 
     @GetMapping("/send")
     public String send(String message) {
-        rabbitTemplate.convertAndSend("myQueue3",message);
+        rabbitTemplate.convertAndSend("myExchange3","myRoutingKey3",message);
         return "【send message】" + message;
     }
+
+
+
 
 
 
