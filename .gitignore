@@ -17,15 +17,10 @@
 *.ipr
 
 ### NetBeans ###
-/nbproject/private/
+/nbproject/private/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
 /build/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-/demo-admin/target/
-/demo-common/target/
-/demo-config/target/
-/demo-data/target/
-/demo-service/target/
-/demo-web-core/target/
+
