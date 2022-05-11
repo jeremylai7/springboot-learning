@@ -2,6 +2,7 @@ package com.jeremy.config;
 
 import com.jeremy.util.DateUtil;
 import com.rabbitmq.client.Channel;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -27,11 +28,21 @@ public class MessageReceiver {
     }
 
     @RabbitListener(queuesToDeclare = @Queue("myQueue3"))
-    public void process3(String message, Channel channel) {
+    public void process3(String msg, Channel channel, Message message) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         String time = sdf.format(date);
-        System.out.println("【接收信息】" + message + " 当前时间" + time);
+        System.out.println("【接收信息】" + msg + " 当前时间" + time);
+        System.out.println(message.getMessageProperties().getDeliveryTag());
+
+        try {
+            long tag = message.getMessageProperties().getDeliveryTag();
+            if (tag >= 4) {
+                channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
