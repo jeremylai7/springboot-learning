@@ -9,10 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @desc:
  */
 @SpringBootApplication
-public class SpringRabbitmqApplication {
+public class RabbitmqApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringRabbitmqApplication.class,args);
+		SpringApplication.run(RabbitmqApplication.class,args);
 	}
 
 }
