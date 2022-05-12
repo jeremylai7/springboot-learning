@@ -33,37 +33,37 @@ public class RabbitConfig {
                 if (ack) {
                     log.info("【发送成功】");
                 } else {
-                    log.info("【发送失败】correlationData:" + correlationData + " cause:" + cause);
+                    log.info("【发送失败】");
                 }
             }
         });
+	    rabbitTemplate.setMandatory(true);
         rabbitTemplate.setReturnCallback(new RabbitTemplate.ReturnCallback() {
-            @Override
-            public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
-                log.warn("【消息发送失败】");
-                log.info("【message】" + message);
-                log.info("【replyCode】" + replyCode);
-            }
+	        @Override
+	        public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
+		        log.warn("【消息发送失败】");
+		        log.info("【message】" + new String(message.getBody()));
+		        log.info("【replyCode】" + replyCode);
+	        }
         });
-
         return rabbitTemplate;
     }
 
     @Bean
-    public DirectExchange myExchange3() {
-        DirectExchange directExchange = new DirectExchange("myExchange3");
+    public DirectExchange myExchange() {
+        DirectExchange directExchange = new DirectExchange("myExchange");
         return directExchange;
     }
 
     @Bean
-    public Queue myQueue3() {
-        Queue queue = new Queue("myQueue3",true);
+    public Queue myQueue() {
+        Queue queue = new Queue("myQueue",true);
         return queue;
     }
 
     @Bean
     public Binding binding3() {
-        return BindingBuilder.bind(myQueue3()).to(myExchange3()).with("myRoutingKey3");
+        return BindingBuilder.bind(myQueue()).to(myExchange()).with("myRoutingKey");
     }
 
 }

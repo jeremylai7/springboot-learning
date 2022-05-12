@@ -27,7 +27,7 @@ public class MessageReceiver {
         System.out.println("【接收信息】" + message + " 当前时间" + time);
     }
 
-    @RabbitListener(queuesToDeclare = @Queue("myQueue3"))
+    @RabbitListener(queuesToDeclare = @Queue("myQueue"))
     public void process3(String msg, Channel channel, Message message) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();

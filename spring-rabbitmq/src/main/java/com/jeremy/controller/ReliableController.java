@@ -1,11 +1,14 @@
 package com.jeremy.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 /**
  * @author: laizc
@@ -22,7 +25,8 @@ public class ReliableController {
 
     @GetMapping("/send")
     public String send(String message) {
-        rabbitTemplate.convertAndSend("myExchange3","myRoutingKey3",message);
+        rabbitTemplate.convertAndSend("myExchange","myRoutingKey2344",message,new CorrelationData(UUID.randomUUID().toString()));
+	    System.out.println("【发送消息】" + message);
         return "【send message】" + message;
     }
 
