@@ -25,7 +25,7 @@ public class ReliableController {
 
     @GetMapping("/send")
     public String send(String message) {
-        rabbitTemplate.convertAndSend("myExchange","myRoutingKey2344",message,new CorrelationData(UUID.randomUUID().toString()));
+        rabbitTemplate.convertAndSend("myExchange","myRoutingKey",message,new CorrelationData(UUID.randomUUID().toString()));
 	    System.out.println("【发送消息】" + message);
         return "【send message】" + message;
     }
