@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @Author: laizc
  * @Date: Created in  2022-04-21
- * @desc:
+ * @desc: 发布订阅模式
  */
 @RestController
 public class PublishSendController {

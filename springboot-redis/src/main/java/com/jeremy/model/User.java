@@ -1,4 +1,4 @@
-package com.jeremy;
+package com.jeremy.model;
 
 import java.io.Serializable;
 

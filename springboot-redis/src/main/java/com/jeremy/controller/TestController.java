@@ -1,7 +1,7 @@
 package com.jeremy.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.jeremy.User;
+import com.jeremy.model.User;
 import com.jeremy.redis.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
