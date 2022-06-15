@@ -19,7 +19,6 @@ public class IndexController {
     @GetMapping("/")
     public String index() {
         indexService.sendMessage("发送消息");
-        System.out.println("hello world");
         return "send ok";
     }
 

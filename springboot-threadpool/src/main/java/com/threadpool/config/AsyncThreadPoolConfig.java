@@ -17,10 +17,10 @@ public class AsyncThreadPoolConfig {
 
     @Bean
     public Executor asyncThreadPool() {
-        int corePoolSize = 5;
-        int maximumPoolSize = 5;
+        int corePoolSize = 1;
+        int maximumPoolSize = 1;
         long keepAliveTime = 10;
-        int queueSize = 100;
+        int queueSize = 1;
         return new ThreadPoolExecutor(corePoolSize,
                 maximumPoolSize,
                 keepAliveTime,

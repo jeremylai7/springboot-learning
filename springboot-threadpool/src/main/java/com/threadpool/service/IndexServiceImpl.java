@@ -16,12 +16,12 @@ public class IndexServiceImpl implements IndexService{
     @Async("asyncThreadPool")
     public void sendMessage(String message) {
         System.out.println("当前线程池名称：" + Thread.currentThread().getName());
-        System.out.println("发送消息");
         try {
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("发送消息");
     }
 
 
