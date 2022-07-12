@@ -18,7 +18,7 @@ import java.util.Set;
  * @desc:
  */
 @RestController
-public class TestController {
+public class RedisController {
 
 	@Autowired
 	private RedisService redisService;
