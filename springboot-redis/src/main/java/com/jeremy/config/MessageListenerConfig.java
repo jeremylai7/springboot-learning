@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @Author: laizc
  * @Date: Created in  2022-04-21
- * @desc:
+ * @desc: 发布订阅 消息监听器
  */
 @Configuration
 public class MessageListenerConfig {
