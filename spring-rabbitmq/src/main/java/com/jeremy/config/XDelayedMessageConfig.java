@@ -5,6 +5,7 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.CustomExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.Map;
  * @Date: Created in  2022-04-18
  * @desc: 延迟队列
  */
-@Component
+@Configuration
 public class XDelayedMessageConfig {
 	/**
 	 * 队列
