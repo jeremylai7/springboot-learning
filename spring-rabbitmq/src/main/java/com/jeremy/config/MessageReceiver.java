@@ -60,7 +60,12 @@ public class MessageReceiver {
 }
 
     @RabbitListener(queues = XDelayedMessageConfig.DIRECT_QUEUE)
-    public void delayProcess(String message) {
-        System.out.println("【接收消息】" + message + " 当前时间" + DateUtil.dateFormat(new Date()));
+    public void delayProcess(String msg,Channel channel, Message message) {
+        System.out.println("【接收消息】" + msg + " 当前时间" + DateUtil.dateFormat(new Date()));
+        try {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
