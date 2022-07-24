@@ -53,11 +53,16 @@ public class MessageReceiver {
      * @param message
      */
     @RabbitListener(queues = DelayQueueRabbitConfig.DLX_QUEUE)
-    public void delayPrecss(String message) throws InterruptedException {
-        System.out.println("【接收消息】" + message + " 当前时间" + DateUtil.dateFormat(new Date()));
+    public void delayPrecss(String msg,Channel channel,Message message) throws InterruptedException {
+        System.out.println("【接收消息】" + msg + " 当前时间" + DateUtil.dateFormat(new Date()));
         //接收后数据库查询，延迟五秒
         //Thread.sleep(5000);
-}
+        try {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @RabbitListener(queues = XDelayedMessageConfig.DIRECT_QUEUE)
     public void delayProcess(String msg,Channel channel, Message message) {

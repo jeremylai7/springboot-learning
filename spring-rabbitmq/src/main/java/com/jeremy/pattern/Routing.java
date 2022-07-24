@@ -40,23 +40,23 @@ public class Routing {
     }
 
     @Bean
-    public DirectExchange directExchange() {
+    public DirectExchange routingExchange() {
         return new DirectExchange("routingExchange");
     }
 
     @Bean
     public Binding routingFirstBind() {
-        return BindingBuilder.bind(routingFirstQueue()).to(directExchange()).with("firstRoutingBind");
+        return BindingBuilder.bind(routingFirstQueue()).to(routingExchange()).with("firstRoutingBind");
     }
 
     @Bean
     public Binding routingSecondBind() {
-        return BindingBuilder.bind(routingSecondQueue()).to(directExchange()).with("secondRoutingBind");
+        return BindingBuilder.bind(routingSecondQueue()).to(routingExchange()).with("secondRoutingBind");
     }
 
     @Bean
     public Binding routingThirdBind() {
-        return BindingBuilder.bind(routingThirdQueue()).to(directExchange()).with("thirdRoutingBind");
+        return BindingBuilder.bind(routingThirdQueue()).to(routingExchange()).with("thirdRoutingBind");
     }
 
     /**
