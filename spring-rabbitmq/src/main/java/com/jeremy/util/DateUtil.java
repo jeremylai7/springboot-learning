@@ -11,7 +11,7 @@ import java.util.Date;
 public class DateUtil {
 
     public static String dateFormat(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         return sdf.format(date);
     }
 }
