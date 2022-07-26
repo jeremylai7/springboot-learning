@@ -46,17 +46,17 @@ public class Routing {
 
     @Bean
     public Binding routingFirstBind() {
-        return BindingBuilder.bind(routingFirstQueue()).to(routingExchange()).with("firstRoutingBind");
+        return BindingBuilder.bind(routingFirstQueue()).to(routingExchange()).with("firstRouting");
     }
 
     @Bean
     public Binding routingSecondBind() {
-        return BindingBuilder.bind(routingSecondQueue()).to(routingExchange()).with("secondRoutingBind");
+        return BindingBuilder.bind(routingSecondQueue()).to(routingExchange()).with("secondRouting");
     }
 
     @Bean
     public Binding routingThirdBind() {
-        return BindingBuilder.bind(routingThirdQueue()).to(routingExchange()).with("thirdRoutingBind");
+        return BindingBuilder.bind(routingThirdQueue()).to(routingExchange()).with("thirdRouting");
     }
 
     /**
@@ -82,9 +82,9 @@ public class Routing {
     @GetMapping("/routing-first")
     public String routingFirst() {
         // 使用不同的routingKey 转发到不同的队列
-        rabbitTemplate.convertAndSend("routingExchange","firstRoutingBind"," first routing message");
-        rabbitTemplate.convertAndSend("routingExchange","secondRoutingBind"," first routing message");
-        rabbitTemplate.convertAndSend("routingExchange","ThirdRoutingBind"," first routing message");
+        rabbitTemplate.convertAndSend("routingExchange","firstRouting"," first routing message");
+        rabbitTemplate.convertAndSend("routingExchange","secondRouting"," second routing message");
+        rabbitTemplate.convertAndSend("routingExchange","thirdRouting"," third routing message");
         return "ok";
     }
 
