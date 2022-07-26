@@ -45,7 +45,7 @@ public class Topic {
     @Bean
     public Binding topicFirstBind() {
         // .com 为结尾
-        return BindingBuilder.bind(topicFirstQueue()).to(topicExchange()).with("#.com");
+        return BindingBuilder.bind(topicFirstQueue()).to(topicExchange()).with("*.com");
     }
 
     @Bean
@@ -79,7 +79,7 @@ public class Topic {
 
     @GetMapping("/topic-first-send")
     public String topicFirstSend(String message) {
-        rabbitTemplate.convertAndSend("topicExchange",message,"topic first ");
+        rabbitTemplate.convertAndSend("topicExchange",message,message);
         return "topic ok";
     }
 
