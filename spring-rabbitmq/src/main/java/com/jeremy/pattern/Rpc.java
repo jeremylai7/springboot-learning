@@ -23,7 +23,7 @@ public class Rpc {
 	@RabbitListener(queuesToDeclare =@Queue("rpcQueue"))
 	public String rpcListener(String message) {
 		System.out.println("【rpc接收消息】" + message);
-		return "rpc 已收到" + message;
+		return "rpc 返回" + message;
 	}
 
 	@GetMapping("/rpc-send")

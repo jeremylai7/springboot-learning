@@ -33,11 +33,6 @@ public class Topic {
     }
 
     @Bean
-    public Queue topicThirdQueue() {
-        return new Queue("topicThirdQueue");
-    }
-
-    @Bean
     public TopicExchange topicExchange() {
         return new TopicExchange("topicExchange");
     }
@@ -50,13 +45,10 @@ public class Topic {
 
     @Bean
     public Binding topicSecondBind() {
-        return BindingBuilder.bind(topicSecondQueue()).to(topicExchange()).with("*.cn");
+        // www.为开头
+        return BindingBuilder.bind(topicSecondQueue()).to(topicExchange()).with("www.#");
     }
 
-    @Bean
-    public Binding topicThirdBind() {
-        return BindingBuilder.bind(topicThirdQueue()).to(topicExchange()).with("www.#");
-    }
 
     /**
      * 接收消息
@@ -72,14 +64,12 @@ public class Topic {
         System.out.println("【topic second】" + message);
     }
 
-    @RabbitListener(queues = "topicThirdQueue")
-    public void topicThirdListener(String message) {
-        System.out.println("【topic third】" + message);
-    }
-
     @GetMapping("/topic-first-send")
-    public String topicFirstSend(String message) {
-        rabbitTemplate.convertAndSend("topicExchange",message,message);
+    public String topicFirstSend() {
+        rabbitTemplate.convertAndSend("topicExchange","www.taobao.com","www.taobao.com");
+        rabbitTemplate.convertAndSend("topicExchange","taobao.com","taobao.com");
+        rabbitTemplate.convertAndSend("topicExchange","www.jd","www.jd");
+
         return "topic ok";
     }
 
