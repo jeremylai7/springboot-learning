@@ -60,18 +60,18 @@ public class SendController {
      */
     @GetMapping("/delay")
     public String delay() {
-	    delaySend("延迟队列10 秒","10000");
-	    delaySend("延迟队列5 秒","5000");
-	    delaySend("延迟队列2 秒","2000");
+	    delaySend("延迟队列10 秒",10000);
+	    delaySend("延迟队列5 秒",5000);
+	    delaySend("延迟队列2 秒",2000);
         return "ok";
     }
 
-    private void delaySend(String message,String delayTime) {
+    private void delaySend(String message,Integer delayTime) {
         message = message + " " + DateUtil.dateFormat(new Date());
         System.out.println("【发送消息】" + message);
         rabbitTemplate.convertAndSend(XDelayedMessageConfig.DELAYED_EXCHANGE,XDelayedMessageConfig.ROUTING_KEY,
                 message, message1 -> {
-                    message1.getMessageProperties().setDelay(Integer.valueOf(delayTime));
+                    message1.getMessageProperties().setDelay(delayTime);
                     //message1.getMessageProperties().setHeader("x-delay",delayTime);
                     return message1;
                 });
