@@ -71,7 +71,8 @@ public class SendController {
         System.out.println("【发送消息】" + message);
         rabbitTemplate.convertAndSend(XDelayedMessageConfig.DELAYED_EXCHANGE,XDelayedMessageConfig.ROUTING_KEY,
                 message, message1 -> {
-                    message1.getMessageProperties().setHeader("x-delay",delayTime);
+                    message1.getMessageProperties().setDelay(Integer.valueOf(delayTime));
+                    //message1.getMessageProperties().setHeader("x-delay",delayTime);
                     return message1;
                 });
     }
