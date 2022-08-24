@@ -33,5 +33,10 @@ public class UserTest {
         userService.updateByName("哈哈");
     }
 
+    @Test
+    public void testSelect() {
+        userService.selectById(6L);
+    }
+
 
 }
