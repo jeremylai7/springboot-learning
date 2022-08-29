@@ -1,8 +1,8 @@
 weixin:
-  url:
+  url: https://api.weixin.qq.com/sns/jscode2session
   appid:
   secretKey:
   mchId:
   mchKey:
-  unifiedOrderUrl:
+  unifiedOrderUrl: https://api.mch.weixin.qq.com/pay/unifiedorder
 
