@@ -7,6 +7,15 @@
     <groupId>com</groupId>
     <artifactId>springboot-learning</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>spring-rabbitmq</module>
+        <module>springboot-redis</module>
+        <module>springboot-schedule</module>
+        <module>springboot-test</module>
+        <module>springboot-threadpool</module>
+        <module>springboot-websocket</module>
+        <module>springboot-weixinpay</module>
+    </modules>
     <properties>
         <lombok.version>1.18.0</lombok.version>
         <spring.boot.version>2.1.2.RELEASE</spring.boot.version>
