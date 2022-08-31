@@ -16,6 +16,7 @@
         <module>springboot-websocket</module>
         <module>springboot-weixinpay</module>
     </modules>
+    <packaging>pom</packaging>
     <properties>
         <lombok.version>1.18.0</lombok.version>
         <spring.boot.version>2.1.2.RELEASE</spring.boot.version>
