@@ -15,6 +15,7 @@
         <module>springboot-threadpool</module>
         <module>springboot-websocket</module>
         <module>springboot-weixinpay</module>
+        <module>springboot-websocket-rabbitmq</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
