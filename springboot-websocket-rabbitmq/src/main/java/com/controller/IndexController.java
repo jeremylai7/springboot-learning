@@ -30,10 +30,4 @@ public class IndexController {
 		return "ok";
 	}
 
-
-	@RabbitListener(queues= "#{psQueue.name}")
-	public void pubsubQueueFirst(String message) {
-		System.out.println(message);
-	}
-
 }
