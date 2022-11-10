@@ -8,3 +8,4 @@ SpringBoot 整合各种组件
 
 * `SpringBoot`整合`Websocket`
    * [Spring Boot 整合单机websocket](https://github.com/jeremylai7/blog/blob/origin/2021%E5%B9%B410%E6%9C%88/Spring%20Boot%20%E6%95%B4%E5%90%88%E5%8D%95%E6%9C%BAwebsocket(%E9%99%84github%E6%BA%90%E7%A0%81).md) 
+   * [Websocket集群解决方案](https://github.com/jeremylai7/blog/blob/origin/2022%E5%B9%B411%E6%9C%88/Websocket%E9%9B%86%E7%BE%A4%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.md)
