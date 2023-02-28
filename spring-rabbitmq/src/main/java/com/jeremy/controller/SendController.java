@@ -38,8 +38,8 @@ public class SendController {
      */
     @GetMapping("/dlx")
     public String dlx() {
-        //dlxSend("延迟5 秒","5000");
-        //dlxSend("延迟2 秒","2000");
+        dlxSend("延迟5 秒","5000");
+        dlxSend("延迟2 秒","2000");
 	    dlxSend("延迟10秒","10000");
 	    return "ok";
     }

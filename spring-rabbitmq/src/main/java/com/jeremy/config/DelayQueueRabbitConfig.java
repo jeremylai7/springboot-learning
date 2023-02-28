@@ -15,6 +15,8 @@ import java.util.Map;
 @Configuration
 public class DelayQueueRabbitConfig {
 
+
+   // 下面是死信队列
 	/**
 	 * 死信队列
 	 */
@@ -30,20 +32,6 @@ public class DelayQueueRabbitConfig {
 	 */
 	public static final String DLX_ROUTING_KEY = "routingKey.dlx";
 
-	/**
-	 * 订单延迟队列
-	 */
-	public static final String ORDER_QUEUE = "queue.order";
-
-	/**
-	 * 订单交换机
-	 */
-	public static final String ORDER_EXCHANGE = "exchange.order";
-
-	/**
-	 * 订单routing-key
-	 */
-	public static final String ORDER_ROUTING_KEY = "routingkey.order";
 
 	/**
 	 * 死信队列
@@ -71,6 +59,24 @@ public class DelayQueueRabbitConfig {
 	public Binding bindingDLX() {
 		return BindingBuilder.bind(dlxQueue()).to(dlxExchange()).with(DLX_ROUTING_KEY);
 	}
+
+
+	// 下面的是延迟队列
+	/**
+	 * 订单延迟队列
+	 */
+	public static final String ORDER_QUEUE = "queue.order";
+
+	/**
+	 * 订单交换机
+	 */
+	public static final String ORDER_EXCHANGE = "exchange.order";
+
+	/**
+	 * 订单routing-key
+	 */
+	public static final String ORDER_ROUTING_KEY = "routingkey.order";
+
 
 	/**
 	 * 订单延迟队列
