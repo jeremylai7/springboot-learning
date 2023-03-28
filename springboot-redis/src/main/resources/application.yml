@@ -1,12 +1,15 @@
 spring:
   redis:
     database: 1
-    host: 192.168.3.19
+    host: 34.80.215.211
     port: 6379
-    password: 123456
+    password: xxxxx
     timeout: 3000
   datasource:
-      url: jdbc:mysql://sh-cynosdbmysql-grp-ar201mbc.sql.tencentcdb.com:21857/test?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://34.80.215.211:3306/test?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
       username: root
       password: xxxxx
       driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        # 最大连接数，默认 10
+        maximum-pool-size: 30
