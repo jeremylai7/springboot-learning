@@ -9,4 +9,6 @@ import tk.mybatis.mapper.common.Mapper;
  * @desc:
  */
 public interface ProductDao extends Mapper<Product>{
+
+    Product selectById(long id);
 }
