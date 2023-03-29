@@ -1,7 +1,9 @@
 package com.jeremy.controller;
 
 import com.jeremy.dao.OrderDao;
+import com.jeremy.dao.ProductDao;
 import com.jeremy.model.Order;
+import com.jeremy.model.Product;
 import com.jeremy.service.MysqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,15 +27,30 @@ public class MysqlLockController {
     @Resource
     private MysqlService mysqlService;
 
+    @Resource
+    private ProductDao productDao;
+
+    @Resource
+    private OrderDao orderDao;
+
     @GetMapping("/order")
-    public String order() {
+    public String order() throws Exception {
         Order order = new Order();
-        order.setNum(2);
-        order.setPrice(2);
+        order.setNum(1);
+        order.setPrice(10);
         order.setCreateTime(new Date());
         order.setSn(UUID.randomUUID().toString());
         order.setProductId(1L);
         mysqlService.addOrder(order);
-        return "ok";
+        return "下单成功";
+    }
+
+    @GetMapping("/find-order")
+    public String findOrder() {
+        Product product = productDao.selectByPrimaryKey(1L);
+        int orderCount = orderDao.selectCount(null);
+        return "库存剩余："+ product.getStore() + "，订单数量：" + orderCount;
+
+
     }
 }

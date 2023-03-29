@@ -5,6 +5,7 @@ import com.jeremy.dao.ProductDao;
 import com.jeremy.model.Order;
 import com.jeremy.model.Product;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -24,19 +25,22 @@ public class MysqlServiceImpl implements MysqlService{
     private ProductDao productDao;
 
     @Override
-    public void addOrder(Order order) {
+    @Transactional
+    public void addOrder(Order order) throws Exception {
         Product product = productDao.selectById(order.getProductId());
         // 第一个线程还未更新库存，后面的线程都进来获取了未更新的库存。
         // 后续线程更新库存都是更新相同的库存
-        int store = product.getStore();
+        int store = product.getStore() - order.getNum();
         int num = order.getNum();
-        if (store >= num) {
-            // 扣库存
+        if (store >= 0) {
             System.out.println("库存" + store + "订单数：" + num);
-            product.setStore(store - num);
+            // 扣库存
+            product.setStore(store);
             productDao.updateByPrimaryKey(product);
             // 添加订单
             orderDao.insert(order);
+        } else {
+            throw new Exception("哎呦喂，库存不足");
         }
     }
 }

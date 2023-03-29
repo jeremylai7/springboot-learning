@@ -6,6 +6,8 @@ create table t_product(
     primary key(`id`)
 )
 
+
+
 create table t_order(
   `id` bigint(20) not null auto_increment,
   `sn` varchar(64) not null comment '订单号',
@@ -15,6 +17,8 @@ create table t_order(
   `create_time` timestamp not null default CURRENT_TIMESTAMP comment '创建时间',
   primary key(`id`)
 )
+
+
 
 
 

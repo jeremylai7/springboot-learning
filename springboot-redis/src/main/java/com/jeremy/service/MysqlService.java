@@ -9,6 +9,6 @@ import com.jeremy.model.Order;
  */
 public interface MysqlService {
 
-    void addOrder(Order order);
+    void addOrder(Order order) throws Exception;
 
 }
