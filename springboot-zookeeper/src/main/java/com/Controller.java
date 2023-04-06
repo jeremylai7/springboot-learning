@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @desc:
  */
 @RestController
-public class ZookeeperController {
+public class Controller {
 
     @Autowired
     private ZkApi zkApi;
