@@ -16,6 +16,7 @@
         <module>springboot-websocket</module>
         <module>springboot-weixinpay</module>
         <module>springboot-websocket-rabbitmq</module>
+        <module>springboot-zookeeper</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
