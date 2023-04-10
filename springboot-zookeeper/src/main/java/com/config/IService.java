@@ -2,6 +2,8 @@ package com.config;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.curator.framework.recipes.locks.InterProcessMutex;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -25,7 +27,13 @@ public class IService {
 
     }
 
+
+    @Autowired
+    private InterProcessMutex interProcessMutex;
+
     public void secKill() throws Exception {
+        // 获取锁
+        interProcessMutex.acquire();
         // 扣减库存,创建订单
         int num = store.get("a");
         if (num > 0) {
@@ -34,8 +42,10 @@ public class IService {
             Thread.sleep(100);
             order.put("a",orderNum + 1);
         } else {
+            interProcessMutex.release();
             throw new Exception("库存不够");
         }
+        interProcessMutex.release();
 
     }
 

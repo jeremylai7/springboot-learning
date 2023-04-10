@@ -1,6 +1,10 @@
 package com.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.locks.InterProcessMutex;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
@@ -26,7 +30,7 @@ public class ZookeeperConfig {
     @Value("${zookeeper.timeout}")
     private int timeout;
 
-    @Bean("zkClient")
+    @Bean
     public ZooKeeper zooKeeper() {
         ZooKeeper zooKeeper = null;
         try {
@@ -46,6 +50,29 @@ public class ZookeeperConfig {
             log.error("【连接异常】 .....{}",e);
         }
         return zooKeeper;
+    }
+
+    /**
+     * curator 工具类封装实现了分布式锁
+     * @return
+     */
+    @Bean
+    public InterProcessMutex interProcessMutex() {
+        CuratorFramework zkClient = getZkClient();
+        String lockPath = "/lock";
+        InterProcessMutex lock = new InterProcessMutex(zkClient,lockPath);
+        return lock;
+    }
+
+    private CuratorFramework getZkClient() {
+        ExponentialBackoffRetry retry = new ExponentialBackoffRetry(1000,3,5000);
+        CuratorFramework zkClient = CuratorFrameworkFactory.builder()
+                .connectString(address)
+                .sessionTimeoutMs(5000)
+                .connectionTimeoutMs(5000)
+                .retryPolicy(retry).build();
+        zkClient.start();
+        return zkClient;
     }
 
 
