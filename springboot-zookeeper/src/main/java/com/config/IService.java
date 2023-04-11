@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: laizc
@@ -31,9 +32,14 @@ public class IService {
     @Autowired
     private InterProcessMutex interProcessMutex;
 
+    private int index = 0;
+
     public void secKill() throws Exception {
         // 获取锁
-        interProcessMutex.acquire();
+        //interProcessMutex.acquire();
+        // 根据业务获取超时时间
+        interProcessMutex.acquire(3, TimeUnit.SECONDS);
+
         // 扣减库存,创建订单
         int num = store.get("a");
         if (num > 0) {
@@ -41,10 +47,14 @@ public class IService {
             int orderNum = order.get("a");
             Thread.sleep(100);
             order.put("a",orderNum + 1);
+            if (index == 3) {
+                throw new Exception("系统错误");
+            }
         } else {
             interProcessMutex.release();
             throw new Exception("库存不够");
         }
+        index++;
         interProcessMutex.release();
 
     }
