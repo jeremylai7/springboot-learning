@@ -35,6 +35,7 @@ public class IService {
     private int index = 0;
 
     public void secKill() throws Exception {
+        index++;
         // 获取锁
         //interProcessMutex.acquire();
         // 根据业务获取超时时间
@@ -54,7 +55,6 @@ public class IService {
             interProcessMutex.release();
             throw new Exception("库存不够");
         }
-        index++;
         interProcessMutex.release();
 
     }
