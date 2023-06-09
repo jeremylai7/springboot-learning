@@ -1,6 +1,7 @@
 package com.test.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
@@ -18,13 +19,21 @@ import java.util.Enumeration;
 public class CookieAndSessionController {
 
     @GetMapping("/cookie")
-    public String cookie(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        HttpSession session = request.getSession();
-        Enumeration<String> sessionList = session.getAttributeNames();
-        Cookie cookie = new Cookie("name","jeremy");
-        response.addCookie(cookie);
+    @ResponseBody
+    public String cookie(String a, HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] requestCookies = request.getCookies();
+        if (a != null) {
+            Cookie cookie = new Cookie("name",a);
+            response.addCookie(cookie);
+        }
         return "ok";
+    }
+
+    @GetMapping("/session")
+    @ResponseBody
+    public String session(String a, HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        return "session id ：" + session.getId();
     }
 
 }
