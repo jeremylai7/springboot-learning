@@ -33,7 +33,24 @@ public class CookieAndSessionController {
     @ResponseBody
     public String session(String a, HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        return "session id ：" + session.getId();
+        Boolean login =(Boolean) session.getAttribute("login");
+        String loginInfo;
+        if (login == null) {
+            loginInfo = "未登录";
+        } else {
+            loginInfo = "已登录";
+        }
+        return "session id ：" + session.getId() + ":" + loginInfo;
     }
+
+    @GetMapping("/login")
+    @ResponseBody
+    public String login(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.setAttribute("login",true);
+        return "ok";
+    }
+
+
 
 }

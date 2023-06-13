@@ -27,6 +27,7 @@ public class RedissonConfig {
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
+        //config.setLockWatchdogTimeout();
         // 单机模式
         config.useSingleServer()
                 .setAddress("redis://" + host + ":" + port)
