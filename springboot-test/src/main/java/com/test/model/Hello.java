@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * @desc:
  */
 @Component
-//@Scope("prototype")
+@Scope("prototype")
 public class Hello {
 
     private int name = 4;
