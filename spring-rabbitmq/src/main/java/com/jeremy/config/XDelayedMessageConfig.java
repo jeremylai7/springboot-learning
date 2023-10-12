@@ -18,10 +18,6 @@ import java.util.Map;
  */
 @Configuration
 public class XDelayedMessageConfig {
-	/**
-	 * 队列
-	 */
-	public static final String DIRECT_QUEUE = "queue.delayed";
 
 	/**
 	 * 延迟交换机
@@ -29,14 +25,41 @@ public class XDelayedMessageConfig {
 	public static final String DELAYED_EXCHANGE = "exchange.delayed";
 
 	/**
+	 * 队列
+	 */
+	public static final String DIRECT_QUEUE = "queue.delayed";
+
+
+	/**
 	 * 绑定的routing key
 	 */
 	public static final String ROUTING_KEY = "routingKey.bind";
+
+	/**
+	 * 重试队列
+	 */
+	public static final String RETRY_QUEUE = "queue.retry";
+
+
+	/**
+	 * 重试routing key
+	 */
+	public static final String RETRY_ROUTING_KEY = "routingKey.bind.retry";
+
+
 
 	@Bean
 	public Queue directQueue() {
 		return new Queue(DIRECT_QUEUE,true);
 	}
+
+	@Bean
+	public Queue retryQueue() {
+		return new Queue(RETRY_QUEUE,true);
+	}
+
+
+
 
 	/**
 	 * 定义延迟交换机
@@ -54,5 +77,12 @@ public class XDelayedMessageConfig {
 	public Binding delayOrderBinding() {
 		return BindingBuilder.bind(directQueue()).to(delayedExchange()).with(ROUTING_KEY).noargs();
 	}
+
+	@Bean
+	public Binding retryQueueBinding() {
+		return BindingBuilder.bind(retryQueue()).to(delayedExchange()).with(RETRY_ROUTING_KEY).noargs();
+	}
+
+
 
 }
