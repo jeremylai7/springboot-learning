@@ -14,7 +14,7 @@ import java.util.concurrent.ScheduledFuture;
  * @Date: Created in  2021-09-10
  * @desc:
  */
-@Component
+//@Component
 @EnableScheduling
 public class DynamicTaskScheduler {
 

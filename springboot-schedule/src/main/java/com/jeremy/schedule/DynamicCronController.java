@@ -20,19 +20,19 @@ import java.util.Date;
 @RequestMapping("/dynamic-cron")
 public class DynamicCronController {
 
-	@Autowired
-	private DynamicCronHandler dynamicCronHandler;
+	//@Autowired
+	//private DynamicCronHandler dynamicCronHandler;
 
 	@GetMapping("/test1")
 	public Object test(String cron) {
 		if (cron == null) {
 			cron = "0/2 * * * * ?";
 		}
-		dynamicCronHandler.taskCron(cron);
+		//dynamicCronHandler.taskCron(cron);
 		return null;
 	}
 
-	@Autowired
+	//@Autowired
 	private DynamicTaskScheduler dynamicTaskScheduler;
 
 

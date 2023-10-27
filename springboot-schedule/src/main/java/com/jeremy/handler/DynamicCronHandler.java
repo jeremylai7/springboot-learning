@@ -13,8 +13,8 @@ import java.util.Date;
  * @Date: Created in  2021-09-10
  * @desc:
  */
-@EnableScheduling
-@Component
+//@EnableScheduling
+//@Component
 public class DynamicCronHandler implements SchedulingConfigurer {
 
 	private static final String DEFAULT_CORN = "0/5 * * * * ?";

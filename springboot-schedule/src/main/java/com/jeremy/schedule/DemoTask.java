@@ -13,10 +13,21 @@ import java.util.Date;
 @Component
 public class DemoTask {
 
-	/*@Scheduled(cron = "0/20 * * * * ? ")
+	@Scheduled(fixedDelay = 1000*10)
 	public void test() {
+		System.out.println("task1 start");
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		Date date = new Date();
-		System.out.println("hello" + date);
+		System.out.println("task1 " + date);
+	}
 
-	}*/
+	@Scheduled(fixedDelay = 1000*2)
+	public void test2() {
+		Date date = new Date();
+		System.out.println("tesk2 " + date);
+	}
 }

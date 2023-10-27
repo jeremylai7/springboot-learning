@@ -1,0 +1,5 @@
+#spring:
+#  task:
+#    scheduling:
+#      pool:
+#        size: 1
