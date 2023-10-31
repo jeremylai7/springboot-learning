@@ -13,7 +13,7 @@ import java.util.Date;
 @Component
 public class DemoTask {
 
-	@Scheduled(fixedDelay = 1000*10)
+	//@Scheduled(fixedDelay = 1000*10)
 	public void test() {
 		System.out.println("task1 start");
 		try {
@@ -25,7 +25,7 @@ public class DemoTask {
 		System.out.println("task1 " + date);
 	}
 
-	@Scheduled(fixedDelay = 1000*2)
+	//@Scheduled(fixedDelay = 1000*2)
 	public void test2() {
 		Date date = new Date();
 		System.out.println("tesk2 " + date);
