@@ -1,5 +1,6 @@
 package com.test.controller;
 
+import com.test.annotation.AopTest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,5 +17,11 @@ public class AopSecondController {
     @GetMapping
     public void second() {
         System.out.println("second");
+    }
+
+    @GetMapping("/test")
+    @AopTest
+    public void test(String aa) {
+        System.out.println("test annotation");
     }
 }
