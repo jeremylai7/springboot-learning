@@ -14,7 +14,7 @@ public class _17TrackController {
 
     @PostMapping("/web-hook")
     public String webHook(@RequestBody String body) {
-
+        System.out.println(body);
         return "";
     }
 
