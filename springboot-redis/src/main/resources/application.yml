@@ -1,14 +1,14 @@
 spring:
   redis:
     database: 1
-    host: 34.80.215.211
+    host: 34.126.70.214
     port: 6379
-    password: xxx
+    password: foot123
     timeout: 3000
   datasource:
-      url: jdbc:mysql://34.80.215.211:3306/test?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://34.126.70.214:3306/test?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
       username: root
-      password: xxx
+      password: lzc123456
       driver-class-name: com.mysql.cj.jdbc.Driver
       hikari:
         # 最大连接数，默认 10

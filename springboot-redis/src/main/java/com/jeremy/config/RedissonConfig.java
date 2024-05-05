@@ -21,7 +21,7 @@ public class RedissonConfig {
     @Value("${spring.redis.port}")
     private String port;
 
-    @Value("${sprig.redis.password}")
+    @Value("${spring.redis.password}")
     private String password;
 
     @Bean
