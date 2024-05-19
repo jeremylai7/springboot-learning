@@ -16,7 +16,7 @@ public class FastJsonTest {
     @Test
     public void test() {
         // 测试 JSONArray.parseArray 大小写 1.1.22  1.1.23 忽略了大小写
-        String jsonStr = "[{\"Aa\":\"bb\"}]";
+        String jsonStr = "[{\"AA\":\"bb\"}]";
         List<Fast> list = JSONArray.parseArray(jsonStr,Fast.class);
         System.out.println(list.get(0).getAa());
     }
