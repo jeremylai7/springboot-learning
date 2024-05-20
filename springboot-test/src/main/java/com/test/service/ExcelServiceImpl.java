@@ -3,16 +3,21 @@ package com.test.service;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.EasyExcelFactory;
 import com.test.dto.DemoExcelInput;
+import net.sf.jxls.transformer.XLSTransformer;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: laizc
@@ -61,5 +66,55 @@ public class ExcelServiceImpl implements ExcelService{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void userDefinedExport(HttpServletResponse response) throws IOException, InvalidFormatException {
+        List<Map<String, Object>> sheetDatas = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        List<DemoExcelInput> demoExcelInputList = new ArrayList<>();
+        DemoExcelInput input = new DemoExcelInput();
+        input.setName("aa");
+        input.setImageUrl("图片");
+        demoExcelInputList.add(input);
+        DemoExcelInput input2 = new DemoExcelInput();
+        input2.setName("bb");
+        input2.setImageUrl("图片2");
+        demoExcelInputList.add(input2);
+        map.put("list", demoExcelInputList);
+        map.put("fullName","腾讯企业");
+        sheetDatas.add(map);
+        File file = ResourceUtils.getFile("classpath:excel/statement.xlsx");
+
+        InputStream in = new BufferedInputStream(new FileInputStream(file));
+        XLSTransformer transformer = new XLSTransformer();
+        Workbook workbook = transformer.transformXLS(in, map);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        workbook.write(out);
+        // 获取内存缓冲中的数据
+        byte[] content = out.toByteArray();
+        // 将字节数组转化为输入流
+        InputStream inputStream = new ByteArrayInputStream(content);
+        String newFile = "test.xlsx";
+        // 文件中文名添加"iso-8859-1"防止乱码
+        response.setHeader("Content-Disposition", "attachment; filename=" + new String((newFile).getBytes("UTF-8"), "iso-8859-1"));
+        response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        ServletOutputStream outputStream = response.getOutputStream();
+        BufferedInputStream bis = new BufferedInputStream(inputStream);
+        BufferedOutputStream bos = new BufferedOutputStream(outputStream);
+        byte[] buff = new byte[8192];
+        int bytesRead;
+        while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+            bos.write(buff, 0, bytesRead);
+        }
+        bis.close();
+        bos.close();
+        outputStream.flush();
+        outputStream.close();
+
+
+
+
     }
 }
