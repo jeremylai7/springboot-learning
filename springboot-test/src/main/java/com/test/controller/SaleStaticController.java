@@ -16,8 +16,9 @@ public class SaleStaticController {
                 Arrays.asList("a", "c", "b")
                 // 可以继续添加更多天的销量数据
         );
-
+        // 所有商品榜首天数
         Map<String, Integer> topDays = new HashMap<>();
+        // 所有商品前三天数
         Map<String, Integer> topThreeDays = new HashMap<>();
 
         // 初始化所有商品的计数器
@@ -42,6 +43,7 @@ public class SaleStaticController {
         for (int i = 0; i < dailySales.size(); i++) {
             List<String> day = dailySales.get(i);
             String topProduct = day.get(0);
+            // 获取前三数据
             Set<String> currentTopThree = new HashSet<>(day.subList(0, Math.min(3, day.size())));
 
             // 更新榜首计数
