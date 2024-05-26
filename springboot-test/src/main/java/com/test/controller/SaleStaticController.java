@@ -12,8 +12,8 @@ public class SaleStaticController {
     public static void main(String[] args) {
         List<List<String>> dailySales = Arrays.asList(
                 Arrays.asList("a", "b", "c"),
-                Arrays.asList("b", "c", "a"),
-                Arrays.asList("a", "c", "b")
+                Arrays.asList("a", "c", "a"),
+                Arrays.asList("b", "c", "b")
                 // 可以继续添加更多天的销量数据
         );
         // 所有商品榜首天数
