@@ -35,8 +35,9 @@ public class SaleStaticController {
             currentTopStreak.put(product, 0);
             currentTopThreeStreak.put(product, 0);
         }
-
+        // 记录上一个榜首
         String lastTopProduct = null;
+        // 记录上一个前三商品
         Set<String> lastTopThreeProducts = new HashSet<>();
 
         // 统计每天的排行情况
