@@ -23,8 +23,5 @@ public class TypeTests {
 		System.out.println(("----- selectAll method test ------"));
 		List<Type> userList = typeMapper.selectList(null);
 		userList.forEach(System.out::println);
-
-
 	}
-
 }
