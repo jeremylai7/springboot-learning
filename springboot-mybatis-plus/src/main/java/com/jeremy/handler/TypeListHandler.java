@@ -1,5 +1,7 @@
 package com.jeremy.handler;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -11,6 +13,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,4 +50,6 @@ public class TypeListHandler extends BaseTypeHandler<List<String>> {
     public List<String> getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         return null;
     }
+
+
 }
