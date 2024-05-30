@@ -2,6 +2,7 @@ package com.jeremy.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.jeremy.handler.StringListTypeHandler;
 import com.jeremy.handler.TypeListHandler;
 import lombok.Data;
 
@@ -20,6 +21,6 @@ public class Type {
 
     private String typeName;
 
-    @TableField(typeHandler = TypeListHandler.class)
+    @TableField(typeHandler = StringListTypeHandler.class)
     private List<String> typeList;
 }
