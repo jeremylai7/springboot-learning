@@ -1,8 +1,23 @@
 spring:
   elasticsearch:
+
     rest:
-      uris: http://192.168.220.2:9201
-  data:
-    elasticsearch:
-      cluster-name: es-cluster
-      cluster-nodes: 192.168.220.2:9200
+      uris: http://172.16.10.180:9200
+      username: elastic
+      password: yh123456
+      connection-timeout: 5s
+      socket-keep-alive: true
+      socket-timeout: 150s
+#  data:
+#    elasticsearch:
+#      cluster-name: es-cluster
+#      cluster-nodes: 172.16.10.180:9200
+
+#spring:
+#  elasticsearch:
+#    uris: http://172.16.10.180:9200/
+#    username: elastic
+#    password: yh123456
+#    connection-timeout: 5s
+#    socket-keep-alive: true
+#    socket-timeout: 150s
