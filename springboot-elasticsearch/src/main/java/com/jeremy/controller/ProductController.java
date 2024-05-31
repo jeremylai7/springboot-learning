@@ -1,6 +1,6 @@
 package com.jeremy.controller;
 
-import com.jeremy.model.Product;
+import com.jeremy.model.ProductTest;
 import com.jeremy.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,17 +20,17 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
+    public ProductTest createProduct(@RequestBody ProductTest product) {
         return productService.saveProduct(product);
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable String id) {
+    public ProductTest getProductById(@PathVariable String id) {
         return productService.findById(id);
     }
 
     @GetMapping("/name/{name}")
-    public List<Product> getProductsByName(@PathVariable String name) {
+    public List<ProductTest> getProductsByName(@PathVariable String name) {
         return productService.findByName(name);
     }
 

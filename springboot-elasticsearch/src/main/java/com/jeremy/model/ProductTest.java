@@ -10,10 +10,13 @@ import org.springframework.data.elasticsearch.annotations.Document;
  * @desc:
  **/
 @Data
-@Document(indexName = "product")
-public class Product {
+@Document(indexName = "product_test")
+public class ProductTest {
     @Id
     private String id;
+
+    private String code;
+
     private String name;
     private String description;
     private double price;
