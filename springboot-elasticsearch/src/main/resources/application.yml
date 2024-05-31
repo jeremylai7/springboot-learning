@@ -1,4 +1,8 @@
 spring:
   elasticsearch:
     rest:
-      uris: http://192.168.220.2:9200
+      uris: http://192.168.220.2:9201
+  data:
+    elasticsearch:
+      cluster-name: es-cluster
+      cluster-nodes: 192.168.220.2:9200
