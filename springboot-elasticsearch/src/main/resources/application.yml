@@ -1,13 +1,11 @@
 spring:
   elasticsearch:
-    rest:
-      #uris: 172.16.10.143:9200
-      uris: 192.168.220.2:9200
-      #username: elastic
-      #password: Xhzx2022
-      connection-timeout: 5s
-      socket-keep-alive: true
-      socket-timeout: 150s
+    uris: http://172.16.10.180:9200/
+    username: elastic
+    password: yh123456
+    connection-timeout: 5s
+    socket-keep-alive: true
+    socket-timeout: 150s
 #  data:
 #    elasticsearch:
 #      cluster-name: es-cluster

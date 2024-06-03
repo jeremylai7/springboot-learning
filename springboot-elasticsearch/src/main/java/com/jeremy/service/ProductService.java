@@ -18,6 +18,11 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+
+    public Iterable<ProductTest> saveAll(List<ProductTest> productTestList) {
+        return productRepository.saveAll(productTestList);
+    }
+
     public ProductTest saveProduct(ProductTest product) {
         return productRepository.save(product);
     }

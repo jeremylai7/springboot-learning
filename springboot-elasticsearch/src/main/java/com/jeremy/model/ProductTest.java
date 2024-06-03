@@ -12,6 +12,16 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @Data
 @Document(indexName = "product_test")
 public class ProductTest {
+
+    public ProductTest(){}
+
+    public ProductTest(String id,String code,String name,double price) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.price = price;
+    }
+
     @Id
     private String id;
 
@@ -20,4 +30,6 @@ public class ProductTest {
     private String name;
     private String description;
     private double price;
+
+
 }
