@@ -3,6 +3,8 @@ package com.jeremy.model;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
  * @author: laizc
@@ -25,11 +27,14 @@ public class ProductTest {
     @Id
     private String id;
 
+    @Field(type = FieldType.Keyword)
     private String code;
 
     private String name;
     private String description;
     private double price;
+
+    private Long productCount;
 
 
 }

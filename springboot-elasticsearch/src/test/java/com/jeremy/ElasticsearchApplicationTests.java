@@ -3,18 +3,22 @@ package com.jeremy;
 
 import cn.hutool.core.bean.BeanUtil;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
 import co.elastic.clients.elasticsearch._types.aggregations.AggregationBuilders;
 import co.elastic.clients.elasticsearch._types.aggregations.Buckets;
 import co.elastic.clients.elasticsearch._types.aggregations.TermsAggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.jeremy.model.ProductTest;
 import com.jeremy.service.ProductService;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,19 +83,63 @@ public class ElasticsearchApplicationTests {
 		);*/
 		BoolQuery.Builder queryBuilder = new BoolQuery.Builder();
 
+		// SELECT materialCode, COUNT(*) FROM erp_order_data WHERE ... GROUP BY materialCode LIMIT ...;
+		TermsAggregation productAggregation = AggregationBuilders.terms(t -> t.field("code.keyword")
+				.size(1000)).terms();
+		// 每个分组获取最新一条数据，取id最大的值，
+		Aggregation productTopHits = AggregationBuilders.topHits(t -> t.source(s -> s.fetch(true))
+				.from(0)
+				.size(1)
+				.sort(SortOptions.of(s -> s.field(d -> d.field("id.keyword").order(SortOrder.Desc)))));
+		// 分组结果分页处理
+		Aggregation productSortPage = AggregationBuilders.bucketSort(b -> b.sort(Lists.newArrayList())
+				.from(100)
+				.size(1000));
+		// materialCode 字段的唯一值数量 COUNT(DISTINCT materialCode)
+		Aggregation productCount = AggregationBuilders.cardinality(c -> c.field("code.keyword"));
 
-		SearchRequest searchRequest = new SearchRequest.Builder()
-				.index("product_test")
+		SearchResponse<Map> searchResponse2 = elasticsearchClient.search(s -> s.index("product_test")
 				.query(q -> q.bool(queryBuilder.build()))
-				//.aggregations("code_terms", agg -> agg.terms(t -> t.field("code")))
-				.build();
-		SearchResponse<Map> searchResponse = elasticsearchClient.search(searchRequest,Map.class);
-		System.out.println(searchResponse);
-		List<ProductTest> hits = searchResponse.hits().hits().stream()
+				.from(0)
+				.size(0)
+				.aggregations("product_aggregate", agg -> agg.terms(productAggregation)
+						.aggregations("product_top_hits", productTopHits)
+						.aggregations("bucket_sort", productSortPage))
+				.aggregations("product_aggregate_count", productCount), Map.class);
+
+		System.out.println(searchResponse2);
+		List<ProductTest> hits = searchResponse2.hits().hits().stream()
 				.map(Hit::source)
 				.map(obj -> BeanUtil.fillBeanWithMap(obj, new ProductTest(), false))
 				.collect(Collectors.toList());
 		System.out.println(hits);
+
+
+		SearchRequest searchRequest = new SearchRequest.Builder()
+				.index("product_test")
+				.query(q -> q.bool(queryBuilder.build()))
+				.aggregations("code_terms", agg -> agg.terms(productAggregation))
+				.build();
+		SearchResponse<Map> searchResponse = elasticsearchClient.search(searchRequest,Map.class);
+		System.out.println(searchResponse);
+
+		// 解析查询结果
+		List<ProductTest> hits2 = searchResponse.hits().hits().stream()
+				.map(Hit::source)
+				.map(obj -> BeanUtil.fillBeanWithMap(obj, new ProductTest(), false))
+				.collect(Collectors.toList());
+		/*List<SearchOrderProductDataVo> searchOrderDataVos = List.of(searchResponse.aggregations().get("product_aggregate").sterms().buckets()).stream().map(Buckets::array).flatMap(List::stream).flatMap(obj -> obj.aggregations().get("product_top_hits").topHits().hits().hits().stream().map(Hit::source).map(hit -> JSON.parseObject(hit.toJson().toString(), SearchOrderProductDataVo.class)).peek(p -> p.setProductCount(obj.docCount()))).toList();
+
+.aggregations("product_aggregate", agg -> agg.terms(productAggregation)
+		// 解析聚合结果
+		TermsAggregate codeTerms = searchResponse.aggregations().get("code_terms").terms();
+		List<? extends Bucket> buckets = codeTerms.buckets().array();
+		for (Bucket bucket : buckets) {
+			String code = bucket.key().stringValue();
+			long count = bucket.docCount();
+			System.out.printf("Code: %s, Count: %d%n", code, count);
+		}*/
+		System.out.println(hits2);
 		/*// 解析聚合结果
 		TermsAggregate codeTerms = searchResponse.aggregations().get("code_terms").terms();
 		List<? extends Bucket> buckets = codeTerms.buckets().array();
@@ -108,6 +156,39 @@ public class ElasticsearchApplicationTests {
 
 
 
+	}
+
+
+	@Test
+	public void copyOne() throws IOException {
+
+		QueryOrderDataIndexDto queryOrderDataIndexDto = new QueryOrderDataIndexDto();
+		queryOrderDataIndexDto.setPageNum(1);
+		queryOrderDataIndexDto.setPageSize(10);
+		BoolQuery.Builder queryBuilder = new BoolQuery.Builder();
+		TermsAggregation productAggregation = AggregationBuilders.terms(t -> t.field("code.keyword").size(queryOrderDataIndexDto.getPageNum() * queryOrderDataIndexDto.getPageSize())).terms();
+		Aggregation productTopHits = AggregationBuilders.topHits(t -> t.source(s -> s.fetch(true)).from(0).size(1).sort(SortOptions.of(s -> s.field(d -> d.field("id.keyword").order(SortOrder.Desc)))));
+		Aggregation productSortPage = AggregationBuilders.bucketSort(b -> b.sort(Lists.newArrayList()).from((queryOrderDataIndexDto.getPageNum() - 1) * queryOrderDataIndexDto.getPageSize()).size(queryOrderDataIndexDto.getPageSize()));
+		//Aggregation productCount = AggregationBuilders.cardinality(c -> c.field("code.keyword"));
+		Aggregation productSum = AggregationBuilders.sum(s -> s.field("price.keyword"));
+
+		SearchResponse<Map> searchResponse = elasticsearchClient.search(s -> s.index("product_test").query(q -> q.bool(queryBuilder.build())).from(0).size(0)
+				.aggregations("product_aggregate", agg -> agg.terms(productAggregation)
+					.aggregations("product_top_hits", productTopHits)
+					.aggregations("bucket_sort", productSortPage))
+				    .aggregations("product_sum", productSum), Map.class);
+		//PagingBase<SearchOrderProductDataVo> pagingBase = new PagingBase<>();
+		/*double sumPrice = searchResponse.aggregations().get("product_sum").sum().value();
+		if (sumPrice > 10000) {
+			sumPrice = 10000;
+		}*/
+
+
+		List<ProductTest> searchOrderDataVos = List.of(searchResponse.aggregations().get("product_aggregate").sterms().buckets()).stream().map(Buckets::array).flatMap(List::stream).flatMap(obj -> obj.aggregations().get("product_top_hits").topHits().hits().hits().stream().map(Hit::source).map(hit -> JSON.parseObject(hit.toJson().toString(), ProductTest.class)).peek(p -> p.setProductCount(obj.docCount()))).toList();
+		System.out.println(searchOrderDataVos);
+		//pagingBase.setTotal(count);
+		//pagingBase.setList(searchOrderDataVos);
+		//return pagingBase;*/
 	}
 
 	
