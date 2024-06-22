@@ -14,7 +14,7 @@ public class DemoExcelInput {
     @ExcelProperty("姓名")
     private String name;
 
-    @ExcelProperty("图片")
+    @ExcelProperty(value = "图片",converter = ExcelUrlImageConverter.class)
     private String imageUrl;
 
 }

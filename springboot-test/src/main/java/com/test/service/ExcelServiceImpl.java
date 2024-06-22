@@ -3,6 +3,7 @@ package com.test.service;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.EasyExcelFactory;
 import com.test.dto.DemoExcelInput;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -14,6 +15,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.Map;
  * @desc:
  **/
 @Service
+@Slf4j
 public class ExcelServiceImpl implements ExcelService{
 
 
@@ -38,6 +41,9 @@ public class ExcelServiceImpl implements ExcelService{
         }
         List<DemoExcelInput> meetingStockUpList = EasyExcelFactory.read(inputStream)
                 .head(DemoExcelInput.class).sheet().doReadSync();
+        log.info(meetingStockUpList.toString());
+
+
         return meetingStockUpList;
     }
 
@@ -46,22 +52,18 @@ public class ExcelServiceImpl implements ExcelService{
         List<DemoExcelInput> demoExcelInputs = new ArrayList<>();
         DemoExcelInput demoExcelInput = new DemoExcelInput();
         demoExcelInput.setName("aa");
-        demoExcelInput.setImageUrl("图片1");
+        String url = "https://p26-passport.byteacctimg.com/img/user-avatar/82b069ce17bb5b0eccb7ee67d3f6f3bc~180x180.awebp";
+        demoExcelInput.setImageUrl(url);
         demoExcelInputs.add(demoExcelInput);
-        EasyExcel.write();
-
         // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        String fileName= null;
+        String fileName= "导出excel模板";
+
         try {
-            fileName = URLEncoder.encode("测试","UTF-8").replaceAll("\\+","%20");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        response.setHeader("Content-disposition","attachment;filename*=utf-8''"+fileName+".xlsx");
-        try {
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
+            response.setHeader("Content-disposition","attachment;filename*=utf-8''"+encodedFileName+".xlsx");
             EasyExcel.write(response.getOutputStream(),DemoExcelInput.class).sheet("模板").doWrite(demoExcelInputs);
         } catch (IOException e) {
             e.printStackTrace();
