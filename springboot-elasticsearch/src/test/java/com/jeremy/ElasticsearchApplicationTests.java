@@ -5,10 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
-import co.elastic.clients.elasticsearch._types.aggregations.AggregationBuilders;
-import co.elastic.clients.elasticsearch._types.aggregations.Buckets;
-import co.elastic.clients.elasticsearch._types.aggregations.TermsAggregation;
+import co.elastic.clients.elasticsearch._types.aggregations.*;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
@@ -25,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,7 +42,7 @@ public class ElasticsearchApplicationTests {
 //		ProductTest product3 = new ProductTest("3","2","aa2",12);
 //		ProductTest product4 = new ProductTest("4","2","aa3",44);
 //		ProductTest product5 = new ProductTest("5","2","aa4",16);
-		ProductTest product6 = new ProductTest("7","2","aa5",33);
+		ProductTest product6 = new ProductTest("9","1","aa7",12);
 		List<ProductTest> productTestList = new ArrayList<>();
 		productTestList.add(product6);
 //		productTestList.add(product2);
@@ -55,10 +53,14 @@ public class ElasticsearchApplicationTests {
 		System.out.println(productTestIterable);
 	}
 
-//	@Test
-//	public void delete() {
-//		productService.deleteProduct("1");
-//	}
+	@Test
+	public void delete() {
+		List<String> list = Arrays.asList("5","6","7");
+		for (String string : list) {
+
+			productService.deleteProduct(string);
+		}
+	}
 
 	@Test
 	public void find() {
@@ -166,29 +168,67 @@ public class ElasticsearchApplicationTests {
 		queryOrderDataIndexDto.setPageNum(1);
 		queryOrderDataIndexDto.setPageSize(10);
 		BoolQuery.Builder queryBuilder = new BoolQuery.Builder();
-		TermsAggregation productAggregation = AggregationBuilders.terms(t -> t.field("code.keyword").size(queryOrderDataIndexDto.getPageNum() * queryOrderDataIndexDto.getPageSize())).terms();
+		// select code,count(*) from xx where group by code limit 10;
+		TermsAggregation productAggregation = AggregationBuilders.terms(t -> t.field("code.keyword")
+				.size(queryOrderDataIndexDto.getPageNum() * queryOrderDataIndexDto.getPageSize())).terms();
+		// 每个分组获取最新一条数据，
 		Aggregation productTopHits = AggregationBuilders.topHits(t -> t.source(s -> s.fetch(true)).from(0).size(1).sort(SortOptions.of(s -> s.field(d -> d.field("id.keyword").order(SortOrder.Desc)))));
+		// 排序
 		Aggregation productSortPage = AggregationBuilders.bucketSort(b -> b.sort(Lists.newArrayList()).from((queryOrderDataIndexDto.getPageNum() - 1) * queryOrderDataIndexDto.getPageSize()).size(queryOrderDataIndexDto.getPageSize()));
-		//Aggregation productCount = AggregationBuilders.cardinality(c -> c.field("code.keyword"));
-		Aggregation productSum = AggregationBuilders.sum(s -> s.field("price.keyword"));
+		Aggregation productSortPage2 = AggregationBuilders.bucketSort(b -> b
+				.sort(s -> s.field(f -> f.field("product_sum").order(SortOrder.Asc)))
+				.from((queryOrderDataIndexDto.getPageNum() - 1) * queryOrderDataIndexDto.getPageSize())
+				.size(queryOrderDataIndexDto.getPageSize())
+		);
 
-		SearchResponse<Map> searchResponse = elasticsearchClient.search(s -> s.index("product_test").query(q -> q.bool(queryBuilder.build())).from(0).size(0)
+		//Aggregation productCount = AggregationBuilders.cardinality(c -> c.field("code.keyword"));
+		Aggregation productSum = AggregationBuilders.sum(s -> s.field("price"));
+
+		/*SearchResponse<Map> searchResponse = elasticsearchClient.search(s -> s.index("product_test")
+				.query(q -> q.bool(queryBuilder.build())).from(0).size(0)
 				.aggregations("product_aggregate", agg -> agg.terms(productAggregation)
 					.aggregations("product_top_hits", productTopHits)
 					.aggregations("bucket_sort", productSortPage))
-				    .aggregations("product_sum", productSum), Map.class);
-		//PagingBase<SearchOrderProductDataVo> pagingBase = new PagingBase<>();
-		/*double sumPrice = searchResponse.aggregations().get("product_sum").sum().value();
-		if (sumPrice > 10000) {
-			sumPrice = 10000;
-		}*/
+				    .aggregations("product_sum", productSum), Map.class);*/
+		SearchResponse<Map> searchResponse2 = elasticsearchClient.search(s -> s.index("product_test")
+						.query(q -> q.bool(queryBuilder.build())).from(0).size(0)
+						.aggregations("product_aggregate", agg -> agg.terms(productAggregation)
+						.aggregations("product_sum", productSum)  // Sum aggregation at the correct level
+						.aggregations("product_top_hits", productTopHits)
+						.aggregations("bucket_sort", productSortPage)), Map.class);
+
+		/*List<ProductTest> searchOrderDataVos = List.of(searchResponse.aggregations().get("product_aggregate").sterms().buckets()).stream()
+				.map(Buckets::array).flatMap(List::stream).flatMap(obj -> obj.aggregations().get("product_top_hits")
+						.topHits().hits().hits().stream().map(Hit::source).map(hit -> JSON.parseObject(hit.toJson().toString(), ProductTest.class))
+						.peek(p -> p.setProductCount(obj.docCount()))).toList();*/
 
 
-		List<ProductTest> searchOrderDataVos = List.of(searchResponse.aggregations().get("product_aggregate").sterms().buckets()).stream().map(Buckets::array).flatMap(List::stream).flatMap(obj -> obj.aggregations().get("product_top_hits").topHits().hits().hits().stream().map(Hit::source).map(hit -> JSON.parseObject(hit.toJson().toString(), ProductTest.class)).peek(p -> p.setProductCount(obj.docCount()))).toList();
-		System.out.println(searchOrderDataVos);
-		//pagingBase.setTotal(count);
-		//pagingBase.setList(searchOrderDataVos);
-		//return pagingBase;*/
+		List<ProductTest> searchOrderDataVos3 = searchResponse2.aggregations()
+				.get("product_aggregate")
+				.sterms()
+				.buckets()
+				.array()
+				.stream()
+				.flatMap(bucket -> {
+					// 获取该分组的 sum 值
+					double sum = bucket.aggregations().get("product_sum").sum().value();
+					long docCount = bucket.docCount();
+
+					// 提取 top hits 并将 sum 值赋给 productCount 字段
+					return bucket.aggregations().get("product_top_hits").topHits().hits().hits()
+							.stream()
+							.map(hit -> JSON.parseObject(hit.source().toString(), ProductTest.class))
+							.peek(p -> {
+								p.setSumPrice(sum);
+								p.setProductCount(docCount);
+
+							});
+				})
+				.collect(Collectors.toList());
+
+
+
+		System.out.println(searchOrderDataVos3);
 	}
 
 	

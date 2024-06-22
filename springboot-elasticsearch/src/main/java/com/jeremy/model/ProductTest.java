@@ -36,5 +36,7 @@ public class ProductTest {
 
     private Long productCount;
 
+    private double sumPrice;
+
 
 }
