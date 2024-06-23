@@ -37,7 +37,7 @@ public class ExcelController {
     }
 
     @GetMapping("/easy-download")
-    public void easyDownload(HttpServletResponse response) {
+    public void easyDownload(HttpServletResponse response) throws IOException{
         excelService.easyDownload(response);
     }
 

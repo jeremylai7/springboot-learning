@@ -2,6 +2,7 @@ package com.test.service;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.EasyExcelFactory;
+import com.alibaba.excel.util.IoUtils;
 import com.test.dto.DemoExcelInput;
 import com.test.util.ExcelReadImageUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -49,26 +52,29 @@ public class ExcelServiceImpl implements ExcelService{
     }
 
     @Override
-    public void easyDownload(HttpServletResponse response) {
+    public void easyDownload(HttpServletResponse response) throws IOException {
         List<DemoExcelInput> demoExcelInputs = new ArrayList<>();
         DemoExcelInput demoExcelInput = new DemoExcelInput();
         demoExcelInput.setName("aa");
         String url = "https://p26-passport.byteacctimg.com/img/user-avatar/82b069ce17bb5b0eccb7ee67d3f6f3bc~180x180.awebp";
-        demoExcelInput.setImageUrl(url);
+        demoExcelInput.setImageStr(url);
+        demoExcelInput.setImageUrl(new URL(url));
         demoExcelInputs.add(demoExcelInput);
-        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
+
+        InputStream inputStream = new URL(url).openStream();
+        demoExcelInput.setInputStream(inputStream);
+        byte[] bytes = IoUtils.toByteArray(new URL(url).openStream());
+        demoExcelInput.setBytes(bytes);
+
+        // 使用swagger 会导致各种问题，请直接用浏览器或者用postman
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
         String fileName= "导出excel模板";
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition","attachment;filename*=utf-8''"+encodedFileName+".xlsx");
+        EasyExcel.write(response.getOutputStream(),DemoExcelInput.class).sheet("模板").doWrite(demoExcelInputs);
 
-        try {
-            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
-            response.setHeader("Content-disposition","attachment;filename*=utf-8''"+encodedFileName+".xlsx");
-            EasyExcel.write(response.getOutputStream(),DemoExcelInput.class).sheet("模板").doWrite(demoExcelInputs);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -78,11 +84,11 @@ public class ExcelServiceImpl implements ExcelService{
         List<DemoExcelInput> demoExcelInputList = new ArrayList<>();
         DemoExcelInput input = new DemoExcelInput();
         input.setName("aa");
-        input.setImageUrl("图片");
+        input.setImageStr("图片");
         demoExcelInputList.add(input);
         DemoExcelInput input2 = new DemoExcelInput();
         input2.setName("bb");
-        input2.setImageUrl("图片2");
+        input2.setImageStr("图片2");
         demoExcelInputList.add(input2);
         map.put("list", demoExcelInputList);
         map.put("fullName","腾讯企业");

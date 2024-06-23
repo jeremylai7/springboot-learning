@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public interface ExcelService {
 
     List<DemoExcelInput> easyImport(MultipartFile multipartFile);
 
-    void easyDownload(HttpServletResponse response);
+    void easyDownload(HttpServletResponse response) throws IOException;
 
     void userDefinedExport(HttpServletResponse response) throws IOException, InvalidFormatException;
 }
