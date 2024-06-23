@@ -1,6 +1,7 @@
 package com.test.dto;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.test.annotation.ExcelImageProperty;
 import lombok.Data;
 
 /**
@@ -15,6 +16,7 @@ public class DemoExcelInput {
     private String name;
 
     @ExcelProperty(value = "图片",converter = ExcelUrlImageConverter.class)
+    @ExcelImageProperty(index = 2)
     private String imageUrl;
 
 }

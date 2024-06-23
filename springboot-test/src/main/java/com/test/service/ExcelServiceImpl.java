@@ -3,6 +3,7 @@ package com.test.service;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.EasyExcelFactory;
 import com.test.dto.DemoExcelInput;
+import com.test.util.ExcelReadImageUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -34,17 +35,17 @@ public class ExcelServiceImpl implements ExcelService{
     @Override
     public List<DemoExcelInput> easyImport(MultipartFile multipartFile) {
         InputStream inputStream = null;
+        List<DemoExcelInput> demoExcelInputs = null;
         try {
             inputStream = multipartFile.getInputStream();
+            demoExcelInputs = EasyExcelFactory.read(multipartFile.getInputStream())
+                .head(DemoExcelInput.class).sheet().doReadSync();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<DemoExcelInput> meetingStockUpList = EasyExcelFactory.read(inputStream)
-                .head(DemoExcelInput.class).sheet().doReadSync();
-        log.info(meetingStockUpList.toString());
-
-
-        return meetingStockUpList;
+        ExcelReadImageUtil.readImage(inputStream,demoExcelInputs);
+        log.info(demoExcelInputs.toString());
+        return demoExcelInputs;
     }
 
     @Override
