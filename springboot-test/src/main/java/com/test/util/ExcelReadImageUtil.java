@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class ExcelReadImageUtil {
 
-    public static <T> List<T> readImage(InputStream inputStream, List<T> list) {
+    public static <T> void readImage(InputStream inputStream, List<T> list) {
         try {
             Workbook workbook = WorkbookFactory.create(inputStream);
             // 默认读取第一页
@@ -66,11 +66,9 @@ public class ExcelReadImageUtil {
                     }
                 }
             }
-            return list;
         } catch (IOException | IllegalAccessException e) {
             e.printStackTrace();
             log.error("read image error {}",e);
         }
-        return list;
     }
 }
