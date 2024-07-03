@@ -69,6 +69,7 @@ public class ExcelReadImageUtil {
         } catch (IOException | IllegalAccessException e) {
             e.printStackTrace();
             log.error("read image error {}",e);
+
         }
     }
 }
