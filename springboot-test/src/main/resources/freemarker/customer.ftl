@@ -140,9 +140,10 @@
             <p>买方(乙方): {buyers}</p>
         </div>
         <div class="fl-right">
-            <p>合同编码: {contractCode}</p>
-            <p>签订地点: {signPlace}</p>
+            <p>合同编码: ${contractCode}</p>
+            <p>序号: ${index}</p>
             <p>签订日期: {signDate}</p>
+
         </div>
     </div>
     <div class="al-center">甲乙双方经协商一致,根据《中华人民共和国民法典》以及其他法律法规,达成以下油品买卖协议:</div>

@@ -1,13 +1,12 @@
 package com.test.controller;
 
 import com.alibaba.excel.util.StringUtils;
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.*;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -34,9 +33,46 @@ public class DownloadController {
 
     @GetMapping("")
     public void download() throws IOException, DocumentException, TemplateException {
+        Date now = new Date();
+        List<ByteArrayOutputStream> pdfStreamList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            ByteArrayOutputStream outputStream = generatePdf(now.toString(),i);
+            pdfStreamList.add(outputStream);
+        }
+        // Merge PDFs into one
+        ByteArrayOutputStream mergedPdfStream = mergePdfs(pdfStreamList);
+
+
+        // 获取当前项目的根目录
+        String projectPath = System.getProperty("user.dir");
+        File pdfFile = new File(projectPath + "/output.pdf");
+        FileOutputStream fileOutputStream = new FileOutputStream(pdfFile);
+        fileOutputStream.write(mergedPdfStream.toByteArray());
+    }
+
+    private ByteArrayOutputStream mergePdfs(List<ByteArrayOutputStream> pdfStreamList) throws DocumentException, IOException {
+        Document document = new Document();
+        ByteArrayOutputStream mergeOutputStream = new ByteArrayOutputStream();
+        PdfCopy pdfCopy = new PdfCopy(document,mergeOutputStream);
+        document.open();
+        for (ByteArrayOutputStream outputStream : pdfStreamList) {
+            PdfReader reader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()));
+            for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                pdfCopy.addPage(pdfCopy.getImportedPage(reader,i));
+            }
+            reader.close();
+        }
+        document.close();
+        return mergeOutputStream;
+
+
+    }
+
+    private ByteArrayOutputStream generatePdf(String time,Integer index) throws IOException, DocumentException, TemplateException {
         Map<String, Object> map = new HashMap<>();
-        map.put("contractCode", "contractCode");
+        map.put("contractCode", time);
         map.put("payMode", "payModeStr");
+        map.put("index",index);
         // 创建一个FreeMarker实例, 负责管理FreeMarker模板的Configuration实例
         Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
@@ -109,14 +145,9 @@ public class DownloadController {
         }
         reader.close();
         stamp.close();
-        Date now = new Date();
-        //String path = fileUploadPathConfig.getOrderContractTemplatePath() + custId + "/" + DateUtil.getYear(now) + "/" + DateUtil.getMonth(now) + "/" + DateUtil.getDay(now) + "/";
-        // 获取当前项目的根目录
-        String projectPath = System.getProperty("user.dir");
-        File pdfFile = new File(projectPath + "/output.pdf");
-        FileOutputStream fileOutputStream = new FileOutputStream(pdfFile);
-        fileOutputStream.write(output.toByteArray());
-    }
+        return output;
 
+
+    }
 
 }
