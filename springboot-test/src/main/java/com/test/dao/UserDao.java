@@ -2,6 +2,9 @@ package com.test.dao;
 
 import com.test.model.User;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author: laizc
  * @date: created in 2022/1/13
@@ -18,5 +21,7 @@ public interface UserDao {
     void updateByNameSelective(User user);
 
     void updateByPrimaryKey(User user);
+
+    List<User> selectList(Map<String,Object> map);
 
 }

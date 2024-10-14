@@ -16,6 +16,18 @@
         from t_user
         where id = #{id,jdbcType=BIGINT}
     </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user
+        <where>
+            <if test="name != null and name != 0">
+                name = #{name}
+            </if>
+        </where>
+    </select>
+
     <insert id="insert" parameterType="com.test.model.User" useGeneratedKeys="true" keyProperty="id">
         insert into t_user (id,name,age,submit_time)
         values (#{id,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},#{age,jdbcType=INTEGER},#{submitTime,jdbcType=TIMESTAMP})
