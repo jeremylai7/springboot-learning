@@ -22,7 +22,7 @@
         <include refid="Base_Column_List"/>
         from t_user
         <where>
-            <if test="name != null and name != 0">
+            <if test="name != null and name != '0'">
                 name = #{name}
             </if>
         </where>
