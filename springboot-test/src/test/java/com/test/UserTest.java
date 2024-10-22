@@ -52,7 +52,7 @@ public class UserTest {
     public void selectList() {
         Map<String,Object> map = new HashMap<>();
         String name = "0";
-        map.put("name",name+"AAAA");
+        map.put("name",name+"A");
         List<User> list = userDao.selectList(map);
         System.out.println(list);
 

@@ -90,6 +90,11 @@
             <artifactId>jxls-core</artifactId>
             <version>1.0.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java</artifactId>
+            <version>3.1.1129</version>
+        </dependency>
 
     </dependencies>
 
