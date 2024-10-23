@@ -1,7 +1,5 @@
 package com.test.aspect;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.REUtil;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +16,7 @@ public class AopTestAspect {
     /**
      * 定义切面，用来确定在哪些方法执行通知，实际内部不会执行。配置 before after Around 注解通知
      */
-    @Pointcut("execution(public * com.test.controller.Aop*.*(..))" +
+    /*@Pointcut("execution(public * com.test.controller.Aop*.*(..))" +
     " && !execution(public * com.test.controller.AopSecondController.*(..))")
     public void verify(){
         System.out.println("hello");
@@ -47,6 +45,6 @@ public class AopTestAspect {
         Object result = joinPoint.proceed(); // 执行目标方法
         Object[] args = joinPoint.getArgs();
         return result;
-    }
+    }*/
 
 }

@@ -1,12 +1,13 @@
 package com.test.controller;
 
 import com.alibaba.excel.util.StringUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.*;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -146,6 +147,20 @@ public class DownloadController {
         reader.close();
         stamp.close();
         return output;
+
+
+    }
+
+    public static void main(String[] args) {
+        String fromParam = "[{\"key\": \"type\", \"name\": \"类型\", \"status\": true, \"showLabel\": true}, {\"key\": \"productNum\", \"name\": \"件数\", \"status\": true, \"showLabel\": true}, {\"key\": \"basicCost\", \"name\": \"含税基础工费(元/g)\", \"status\": true, \"showLabel\": true}, {\"key\": \"basicCostNone\", \"name\": \"基础工费(元/g)\", \"status\": true, \"showLabel\": true}, {\"key\": \"metaCost\", \"name\": \"精品工费(元/g)\", \"status\": true, \"showLabel\": true}, {\"key\": \"includingTax\", \"name\": \"含税工费\", \"status\": true, \"showLabel\": true}, {\"key\": \"oneCost\", \"name\": \"附加工费(元/件)\", \"status\": true, \"showLabel\": true}, {\"key\": \"surchargeTax\", \"name\": \"含税附加费\", \"status\": true, \"showLabel\": true}, {\"key\": \"taxesDues\", \"name\": \"含税服务费(元)\", \"status\": true, \"showLabel\": true}, {\"key\": \"roughWeight\", \"name\": \"毛重(g)\", \"status\": false, \"showLabel\": true}, {\"key\": \"metaCostTotal\", \"name\": \"精品工费合计\", \"status\": true, \"showLabel\": true}, {\"key\": \"subjoinTotal\", \"name\": \"附加费合计(元)\", \"status\": true, \"showLabel\": true}, {\"key\": \"orderPrice\", \"name\": \"订货客户结算单价\", \"status\": false, \"showLabel\": false}, {\"key\": \"orderSettlement\", \"name\": \"订货客户结算金额\", \"status\": false, \"showLabel\": false}, {\"key\": \"costTotalNone\", \"name\": \"工费合计(不含基本工费)\", \"status\": true, \"subtitle\": \"工费合计(元)\", \"showLabel\": true}, {\"key\": \"costTotal\", \"name\": \"工费合计(元)\", \"status\": true, \"showLabel\": true}]";
+        JSONArray fromArray = JSONArray.parseArray(fromParam);
+        Set<String> keySet = new HashSet<>();
+        for (int i = 0; i < fromArray.size(); i++) {
+            JSONObject fromObject = fromArray.getJSONObject(i);
+            if (fromObject.getBoolean("status")) {
+                keySet.add(fromObject.getString("key"));
+            }
+        }
 
 
     }
