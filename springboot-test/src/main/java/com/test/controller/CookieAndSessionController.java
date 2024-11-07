@@ -51,6 +51,11 @@ public class CookieAndSessionController {
         return "ok";
     }
 
-
+    public static void main(String[] args) {
+        String imageUrl = "https://unify-test-meeting-1321732912.cos.ap-guangzhou.myqcloud.com/202407221557256307498.jpg";
+        int dotIndex = imageUrl.lastIndexOf(".");
+        String aa = imageUrl.substring(imageUrl.lastIndexOf(".") + 1);
+        System.out.println(aa);
+    }
 
 }
