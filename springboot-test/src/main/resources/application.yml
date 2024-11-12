@@ -6,3 +6,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 mybatis:
   mapper-locations: classpath:mapper/**.xml
+tencentcloud:
+  tiia:
+    secretId: ${SECRET_ID}
+    secretKey: ${SECRET_KEY}
+    endpoint: tiia.tencentcloudapi.com
+    region: ap-guangzhou
+    groupId: test1
