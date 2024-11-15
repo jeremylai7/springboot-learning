@@ -27,7 +27,7 @@ import java.util.Collections;
 public class ImageSearchController {
 
     /**
-     * 显示这个图片
+     * 限制图片类型
      */
     private static final String[] IMG_SUFFIX = {"png", "jpg", "jpeg", "bmp"};
 
