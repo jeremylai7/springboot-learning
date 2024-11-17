@@ -22,4 +22,6 @@ public interface ImageAnalysisService {
     void deleteImage(List<DeleteImageDTO> list);
 
     void uploadImage(List<AddImageDTO> list);
+
+    void syncImage();
 }

@@ -67,6 +67,7 @@ public class ImageSearchController {
 
 
 
+
     private byte[] inputStreamToByteArray(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         byte[] data = new byte[1024];
