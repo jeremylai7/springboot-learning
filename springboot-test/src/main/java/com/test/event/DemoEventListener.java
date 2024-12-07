@@ -23,6 +23,7 @@ public class DemoEventListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        int a = 1/0;
         log.info(event.getName());
         log.info("事件监听");
 

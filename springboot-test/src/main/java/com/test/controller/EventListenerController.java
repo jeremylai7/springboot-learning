@@ -19,8 +19,8 @@ public class EventListenerController {
     private EventListenerService eventListenerService;
 
     @GetMapping
-    public void eventListener() {
-        eventListenerService.add();
+    public void publish() {
+        eventListenerService.publish();
     }
 
 }

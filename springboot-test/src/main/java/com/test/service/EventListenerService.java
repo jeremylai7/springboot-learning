@@ -7,7 +7,7 @@ package com.test.service;
  **/
 public interface EventListenerService {
 
-    void add();
+    void publish();
 
 }
 
