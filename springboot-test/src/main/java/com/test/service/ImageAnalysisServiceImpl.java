@@ -3,9 +3,11 @@ package com.test.service;
 import com.alibaba.excel.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import com.tencentcloudapi.cvm.v20170312.models.SyncImage;
 import com.tencentcloudapi.tiia.v20190529.TiiaClient;
 import com.tencentcloudapi.tiia.v20190529.models.*;
 import com.test.config.TencentCloudTiiaProperties;
+import com.test.constant.RedisKeyConstant;
 import com.test.dto.AddImageDTO;
 import com.test.dto.DeleteImageDTO;
 import com.test.dto.SearchRequest;
@@ -14,10 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,6 +40,47 @@ public class ImageAnalysisServiceImpl implements ImageAnalysisService{
     @Autowired
     private TencentCloudTiiaProperties tiiaProperties;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Override
+    public void syncImage() {
+        while (true) {
+            SetOperations<String, Object> operations = redisTemplate.opsForSet();
+            Object obj = operations.pop(RedisKeyConstant.PRODUCT_IMAGE_SYNC_CACHE_KEY);
+            if (obj == null) {
+                log.info("暂未发现任务数据");
+                return;
+            }
+            String pop = obj.toString();
+            if (StringUtils.isBlank(pop)) {
+                continue;
+            }
+            DeleteImageDTO deleteImageDTO = new DeleteImageDTO();
+            deleteImageDTO.setEntityId(pop);
+            try {
+                this.deleteImage(Collections.singletonList(deleteImageDTO));
+            } catch (Exception e) {
+                log.error("删除图片失败,entityId {}",pop);
+            }
+            // todo 获取数据具体的数据
+            String imageUrl="";
+            // todo picName 需要全局唯一
+            String picName="";
+
+            AddImageDTO addImageDTO = new AddImageDTO();
+            addImageDTO.setEntityId(pop);
+            addImageDTO.setImgUrl(imageUrl);
+            addImageDTO.setPicName(picName);
+            try {
+                this.uploadImage(Collections.singletonList(addImageDTO));
+            } catch (Exception e) {
+                log.error("上传图片失败,entityId {}",pop);
+            }
+
+
+        }
+    }
 
     @Override
     public ImageInfo [] analysis(SearchRequest searchRequest) throws IOException, TencentCloudSDKException {

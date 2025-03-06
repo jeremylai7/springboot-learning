@@ -36,7 +36,7 @@ public class ImageSearchController {
 
     //检索图片
     @PostMapping("/analysis")
-    public ImageInfo [] analysis(@RequestPart("file") MultipartFile file, @RequestParam("request") String requestJson) throws Exception {
+    public ImageInfo [] analysis(@RequestPart("file") MultipartFile file, @RequestParam(value = "request",required = false) String requestJson) throws Exception {
         SearchRequest request;
         if (StringUtils.isNotBlank(requestJson)) {
             request = JSON.parseObject(requestJson, SearchRequest.class);
@@ -64,6 +64,7 @@ public class ImageSearchController {
     public void deleteImage(@RequestBody DeleteImageDTO deleteImageDTO) {
         imageAnalysisService.deleteImage(Collections.singletonList(deleteImageDTO));
     }
+
 
 
 

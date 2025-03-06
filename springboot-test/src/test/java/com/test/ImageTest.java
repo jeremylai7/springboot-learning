@@ -10,8 +10,12 @@ import com.tencentcloudapi.tiia.v20190529.models.CreateImageRequest;
 import com.tencentcloudapi.tiia.v20190529.models.CreateImageResponse;
 import com.tencentcloudapi.tiia.v20190529.models.SearchImageRequest;
 import com.tencentcloudapi.tiia.v20190529.models.SearchImageResponse;
+import com.test.constant.RedisKeyConstant;
 import org.junit.Test;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 
 /**
  * @author: laizc
@@ -19,6 +23,9 @@ import org.junit.Test;
  * @desc:
  **/
 public class ImageTest {
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
 
@@ -84,5 +91,13 @@ public class ImageTest {
 
         SearchImageResponse response = client.SearchImage(request);
         System.out.println(response);
+    }
+
+    @Test
+    public void updateCache() {
+
+        String value = "424424";
+        SetOperations<String, Object> opsForSet = redisTemplate.opsForSet();
+        opsForSet.add(RedisKeyConstant.PRODUCT_IMAGE_SYNC_CACHE_KEY, value);
     }
 }
