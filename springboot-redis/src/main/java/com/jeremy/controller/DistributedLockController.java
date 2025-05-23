@@ -2,13 +2,17 @@ package com.jeremy.controller;
 
 import com.jeremy.exception.BusinessException;
 import com.jeremy.service.DistributedLockService;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: laizc
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/dl")
+@Slf4j
 public class DistributedLockController {
 
     @Autowired
@@ -48,6 +53,26 @@ public class DistributedLockController {
         rLock.unlock();
         return "ok";
 
+    }
+
+    @GetMapping("/redission2")
+    public void redission2(Long orderId) throws BusinessException {
+        String lockKey = "demo_order_id:" + orderId;
+        RLock lock = redissonClient.getLock(lockKey);
+        try {
+            Assert.isTrue(lock.tryLock(2, 10, TimeUnit.SECONDS), "正在处理中，请勿重复操作！");
+            //AssertUtils.isTrue(lock.tryLock(2, 10, TimeUnit.SECONDS), "正在处理中，请勿重复操作！");
+            // 执行业务代码 xxxxxx
+            //lockAllocation(param);
+
+        } catch (Exception e) {
+            log.error("分配柜台失败, err:{}", e.getMessage(), e);
+            throw new BusinessException("分配柜台失败，失败原因:"+ e.getMessage());
+        } finally {
+            if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
     }
 
 
