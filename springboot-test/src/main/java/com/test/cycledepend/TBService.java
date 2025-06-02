@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
 public class TBService {
 
     @Autowired
-    private TCService cService;
+    private TAService taService;
 }

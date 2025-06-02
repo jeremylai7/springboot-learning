@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 public class TAService {
 
     @Autowired
-    private TBService bService;
+    private TBService tbService;
 
-
-    //@Async 加了就报错
+    //加了就报错
+    @Async
     public void doSomethingAsync() {
         // do something
     }
