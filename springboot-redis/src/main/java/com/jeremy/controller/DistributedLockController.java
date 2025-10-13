@@ -61,7 +61,6 @@ public class DistributedLockController {
         RLock lock = redissonClient.getLock(lockKey);
         try {
             Assert.isTrue(lock.tryLock(2, 10, TimeUnit.SECONDS), "正在处理中，请勿重复操作！");
-            //AssertUtils.isTrue(lock.tryLock(2, 10, TimeUnit.SECONDS), "正在处理中，请勿重复操作！");
             // 执行业务代码 xxxxxx
             //lockAllocation(param);
 
