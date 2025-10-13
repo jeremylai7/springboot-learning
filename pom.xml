@@ -19,6 +19,7 @@
         <module>springboot-zookeeper</module>
         <module>springboot-mybatis-plus</module>
         <module>springboot-elasticsearch</module>
+        <module>springboot-token</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
