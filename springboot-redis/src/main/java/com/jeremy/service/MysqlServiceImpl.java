@@ -4,10 +4,12 @@ import com.jeremy.dao.OrderDao;
 import com.jeremy.dao.ProductDao;
 import com.jeremy.model.Order;
 import com.jeremy.model.Product;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.xml.ws.handler.LogicalHandler;
 import java.math.BigDecimal;
 
 /**
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
  * @desc:
  */
 @Service
+@Slf4j
 public class MysqlServiceImpl implements MysqlService{
 
     @Resource
@@ -31,9 +34,8 @@ public class MysqlServiceImpl implements MysqlService{
         // 第一个线程还未更新库存，后面的线程都进来获取了未更新的库存。
         // 后续线程更新库存都是更新相同的库存
         int store = product.getStore() - order.getNum();
-        int num = order.getNum();
         if (store >= 0) {
-            System.out.println("库存" + store + "订单数：" + num);
+            log.info("库存:" + store );
             // 扣库存
             product.setStore(store);
             productDao.updateByPrimaryKey(product);
