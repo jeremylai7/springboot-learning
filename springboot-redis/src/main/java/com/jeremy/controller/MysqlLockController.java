@@ -33,6 +33,14 @@ public class MysqlLockController {
     @Resource
     private OrderDao orderDao;
 
+    /**
+     *
+     * 并发下单，使用ab压测
+     * 1、先执行，alter.sql 文件，在本项目的 resources/sql 目录下
+     * 2、执行命令：ab -n 1000 -c 20 http://localhost:8080/mysql/order 模拟并发问题
+     * 3、查看库存和订单数量：http://localhost:8080/mysql/find-order
+     *
+     */
     @GetMapping("/order")
     public String order() throws Exception {
         Order order = new Order();
