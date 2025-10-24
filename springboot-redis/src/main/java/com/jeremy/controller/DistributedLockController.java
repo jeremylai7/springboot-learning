@@ -65,8 +65,8 @@ public class DistributedLockController {
             //lockAllocation(param);
 
         } catch (Exception e) {
-            log.error("分配柜台失败, err:{}", e.getMessage(), e);
-            throw new BusinessException("分配柜台失败，失败原因:"+ e.getMessage());
+            log.error("操作失败, err:{}", e.getMessage(), e);
+            throw new BusinessException("操作失败，失败原因:"+ e.getMessage());
         } finally {
             if (lock.isLocked() && lock.isHeldByCurrentThread()) {
                 lock.unlock();
