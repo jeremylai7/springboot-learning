@@ -6,7 +6,7 @@ create table t_product(
     primary key(`id`)
 )
 
-insert into t_product(`id`,`name`,`store`) values(1,'iphone',500);
+insert into t_product(`id`,`name`,`store`) values(1,'iphone',50);
 
 
 

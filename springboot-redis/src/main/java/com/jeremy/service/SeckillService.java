@@ -9,6 +9,7 @@ import com.jeremy.exception.BusinessException;
  */
 public interface SeckillService {
 
-	String seckill(long id) throws BusinessException;
+	void seckill(String id) throws BusinessException;
 
+	String querySecKillProductInfo(String productId);
 }
