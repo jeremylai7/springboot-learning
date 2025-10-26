@@ -1,6 +1,8 @@
 package com.jeremy.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.GeneratedValue;
@@ -18,6 +20,8 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "t_order")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Order {
 
     @Id

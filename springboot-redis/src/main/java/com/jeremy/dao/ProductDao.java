@@ -1,6 +1,7 @@
 package com.jeremy.dao;
 
 import com.jeremy.model.Product;
+import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;
 
 /**
@@ -10,5 +11,7 @@ import tk.mybatis.mapper.common.Mapper;
  */
 public interface ProductDao extends Mapper<Product>{
 
-    Product selectById(long id);
+    Product selectByIdForUpdate(long id);
+
+    void updateStoreById(@Param("stockNum") long stockNum, @Param("productId") Long productId);
 }

@@ -2,14 +2,13 @@ package com.jeremy.controller;
 
 import com.jeremy.dao.OrderDao;
 import com.jeremy.dao.ProductDao;
+import com.jeremy.exception.BusinessException;
 import com.jeremy.model.Order;
 import com.jeremy.model.Product;
 import com.jeremy.service.MysqlService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -23,6 +22,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/mysql")
+@Slf4j
 public class MysqlLockController {
 
     @Resource
@@ -54,12 +54,26 @@ public class MysqlLockController {
         return "下单成功";
     }
 
+
+    /**
+     * 模拟 SeckillController，模拟秒杀，将 map 转成数据库
+     * @param productId
+     * @return
+     * @throws BusinessException
+     */
+    @GetMapping("/order/{productId}")
+    public String skill(@PathVariable Long productId) throws BusinessException {
+        log.info("@skill request, productId:" + productId);
+        mysqlService.seckill(productId);
+        return "下单成功";
+    }
+
     @GetMapping("/find-order")
     public String findOrder() {
         Product product = productDao.selectByPrimaryKey(1L);
         int orderCount = orderDao.selectCount(null);
         return "库存剩余："+ product.getStore() + "，订单数量：" + orderCount;
-
-
     }
+
+
 }

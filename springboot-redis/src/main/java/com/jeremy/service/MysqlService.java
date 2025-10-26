@@ -1,5 +1,6 @@
 package com.jeremy.service;
 
+import com.jeremy.exception.BusinessException;
 import com.jeremy.model.Order;
 
 /**
@@ -11,4 +12,5 @@ public interface MysqlService {
 
     void addOrder(Order order) throws Exception;
 
+    void seckill(Long productId) throws BusinessException;
 }

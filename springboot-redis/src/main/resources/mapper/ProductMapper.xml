@@ -9,12 +9,16 @@
     <sql id="Base_Column_List">
         id,name,store
     </sql>
-    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    <select id="selectByIdForUpdate" resultMap="BaseResultMap" parameterType="java.lang.Long">
         select
         <include refid="Base_Column_List"/>
         from t_product
         where id = #{id,jdbcType=BIGINT} for update
     </select>
+
+    <update id="updateStoreById">
+        update t_product set store =  #{store,jdbcType=BIGINT} where id = #{id,jdbcType=BIGINT}
+    </update>
 
 
 </mapper>
