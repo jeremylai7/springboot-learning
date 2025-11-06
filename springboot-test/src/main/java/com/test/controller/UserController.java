@@ -23,7 +23,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/addUser")
-    public String addUser() {
+    public synchronized String addUser() {
         User user = new User();
         user.setName(UUID.randomUUID().toString().replace("-", ""));
         user.setAge(18);
