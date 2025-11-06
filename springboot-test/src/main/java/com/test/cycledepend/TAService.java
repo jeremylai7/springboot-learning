@@ -16,7 +16,7 @@ public class TAService {
     private TBService tbService;
 
     //加了就报错
-    @Async
+    //@Async
     public void doSomethingAsync() {
         // do something
     }
