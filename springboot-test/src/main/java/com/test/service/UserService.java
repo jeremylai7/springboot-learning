@@ -67,4 +67,9 @@ public class UserService {
         System.out.println(user);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void addUser(User user) {
+        userDao.insert(user);
+    }
+
 }
