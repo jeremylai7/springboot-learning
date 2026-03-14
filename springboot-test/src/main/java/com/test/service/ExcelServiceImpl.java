@@ -7,10 +7,14 @@ import com.alibaba.excel.write.style.column.SimpleColumnWidthStyleStrategy;
 import com.alibaba.excel.write.style.row.SimpleRowHeightStyleStrategy;
 import com.test.dto.DemoExcelInput;
 import com.test.util.ExcelReadImageUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -162,5 +166,60 @@ public class ExcelServiceImpl implements ExcelService{
                 // 相同表头不合并
                 .automaticMergeHead(false)
                 .doWrite(data);
+    }
+
+
+    @Override
+    public void dynamicExportSecond(HttpServletResponse response) {
+        Questions q1 = new Questions(1,"问题1",true);
+        Questions q2 = new Questions(2,"问题2",false);
+        Questions q3 = new Questions(3,"问题3",true);
+        List<Questions> questions = Arrays.asList(q1, q2,q3);
+        Pair<List<List<String>>,List<String>> headResult = buildHead(questions);
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    private Pair<List<List<String>>,List<String>> buildHead(List<Questions> questions) {
+        List<List<String>> head = new ArrayList<>();
+        List<String> questionIdList = new ArrayList<>();
+        questions.stream().forEach(question -> {
+            String text = question.getText();
+            head.add(Collections.singletonList(text));
+            Boolean needReason = question.getNeedReason() == null ? false : question.getNeedReason();
+            if (needReason) {
+                head.add(Collections.singletonList(text + "（原因）"));
+                questionIdList.add(question.getId() + "_reason");
+            }
+        });
+        return Pair.of(head,questionIdList);
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class Questions{
+
+        private Integer id;
+
+        /**
+         * 问题文本
+         */
+        private String text;
+
+        /**
+         * 是否需要原因
+         */
+        private Boolean needReason;
     }
 }
