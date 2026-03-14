@@ -3,6 +3,8 @@ package com.test.service;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.util.IoUtils;
+import com.alibaba.excel.write.style.column.SimpleColumnWidthStyleStrategy;
+import com.alibaba.excel.write.style.row.SimpleRowHeightStyleStrategy;
 import com.test.dto.DemoExcelInput;
 import com.test.util.ExcelReadImageUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: laizc
@@ -121,9 +121,46 @@ public class ExcelServiceImpl implements ExcelService{
         bos.close();
         outputStream.flush();
         outputStream.close();
+    }
 
-
-
-
+    @Override
+    public void dynamicExport(HttpServletResponse response) throws IOException {
+        List<LinkedHashMap<String,Object>> mapList = new ArrayList<>();
+        LinkedHashMap<String,Object> map1 = new LinkedHashMap<>();
+        map1.put("姓名","张三");
+        map1.put("年龄",18);
+        map1.put("性别","男");
+        map1.put("学历","小学");
+        LinkedHashMap<String,Object> map2 = new LinkedHashMap<>();
+        map2.put("姓名","赵四");
+        map2.put("年龄",21);
+        map2.put("性别","男");
+        mapList.add(map1);
+        mapList.add(map2);
+        LinkedHashMap<String, Object> first = mapList.stream()
+                .max(Comparator.comparingInt(Map::size))
+                .orElse(null);
+        List<List<String>> head = first.keySet().stream()
+                .map(Collections::singletonList)
+                .collect(Collectors.toList());
+        List<String> keys = new ArrayList<>(first.keySet());
+        List<List<Object>> data = mapList.stream()
+                .map(m -> {
+                    List<Object> row = new ArrayList<>();
+                    for (String key : keys) {
+                        row.add(m.get(key) == null ? "" : m.get(key));
+                    }
+                    return row;
+                }).collect(Collectors.toList());
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        EasyExcel.write(response.getOutputStream())
+                // 这里放入动态头
+                .head(head)
+                .registerWriteHandler(new SimpleRowHeightStyleStrategy((short)80, (short)20))
+                .registerWriteHandler(new SimpleColumnWidthStyleStrategy(20))
+                .sheet("动态表单")
+                // 相同表头不合并
+                .automaticMergeHead(false)
+                .doWrite(data);
     }
 }

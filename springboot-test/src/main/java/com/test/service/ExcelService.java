@@ -22,4 +22,6 @@ public interface ExcelService {
     void easyDownload(HttpServletResponse response) throws IOException;
 
     void userDefinedExport(HttpServletResponse response) throws IOException, InvalidFormatException;
+
+    void dynamicExport(HttpServletResponse response) throws IOException;
 }
