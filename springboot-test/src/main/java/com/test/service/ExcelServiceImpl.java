@@ -12,9 +12,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jxls.transformer.XLSTransformer;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,12 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author: laizc
@@ -170,12 +172,70 @@ public class ExcelServiceImpl implements ExcelService{
 
 
     @Override
-    public void dynamicExportSecond(HttpServletResponse response) {
+    public void dynamicExportSecond(HttpServletResponse response) throws IOException {
         Questions q1 = new Questions(1,"问题1",true);
         Questions q2 = new Questions(2,"问题2",false);
         Questions q3 = new Questions(3,"问题3",true);
         List<Questions> questions = Arrays.asList(q1, q2,q3);
+
+        Map<Integer,Questions> questionsMap = questions.stream().collect(toMap(Questions::getId, Function.identity()));
         Pair<List<List<String>>,List<String>> headResult = buildHead(questions);
+        List<List<String>> data = new ArrayList<>();
+        //Answer a1 = new Answer(1,"答案1","原因1");
+        Answer a2 = new Answer(1,2,"答案2",null);
+        Answer a3 = new Answer(1,3,"答案3","原因3");
+        Answer a4 = new Answer(2,1,"答案1，回答2",null);
+        Answer a5 = new Answer(2,3,"答案3，回答2","原因3，回答2");
+        List<Answer> answers = Arrays.asList(a2,a3,a4,a5);
+        Map<Integer,Map<Integer,Answer>> answerUserIdMap = answers.stream().collect(Collectors.groupingBy(Answer::getAnswerUserId
+                ,Collectors.toMap(Answer::getQuestionId,Function.identity(),(e1,e2)->e1,LinkedHashMap::new)));
+        AnswerUser u1 = new AnswerUser(1,"张三","12345678901");
+        AnswerUser u2 = new AnswerUser(2,"李四","12345678902");
+        List<AnswerUser> answerUsers = Arrays.asList(u1,u2);
+        List<String> questionsIdList = headResult.getRight();
+        answerUsers.stream().forEach(answerUser -> {
+            List<String> row = new ArrayList<>();
+            row.add(answerUser.getName());
+            row.add(answerUser.getPhone());
+            Integer answerUserId = answerUser.getId();
+            Map<Integer, Answer> questionIdAnswerMap = answerUserIdMap.get(answerUserId);
+            if (questionIdAnswerMap != null) {
+                for (int i = 0; i < questionsIdList.size(); i++) {
+                    String questionId = questionsIdList.get(i);
+                    boolean reason = false;
+                    if (questionId.endsWith("_reason")) {
+                        reason = true;
+                        questionId = questionId.substring(0, questionId.length() - 7);
+                    }
+                    Integer questionIdInt = Integer.valueOf(questionId);
+
+                    Answer answer = questionIdAnswerMap.get(questionIdInt);
+                    if (answer != null) {
+                        if (!reason) {
+                            row.add(answer.getAnswer() == null ? "" : answer.getAnswer());
+                        } else {
+                            row.add(answer.getReason() == null ? "" : answer.getReason());
+                        }
+                    } else {
+                        row.add("");
+                    }
+                }
+            }
+            data.add(row);
+        });
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        EasyExcel.write(response.getOutputStream())
+                // 这里放入动态头
+                .head(headResult.getLeft())
+                .registerWriteHandler(new SimpleRowHeightStyleStrategy((short)80, (short)20))
+                .registerWriteHandler(new SimpleColumnWidthStyleStrategy(20))
+                .sheet("动态表单")
+                // 相同表头不合并
+                .automaticMergeHead(false)
+                .doWrite(data);
+
+
+
 
 
 
@@ -191,10 +251,13 @@ public class ExcelServiceImpl implements ExcelService{
 
     private Pair<List<List<String>>,List<String>> buildHead(List<Questions> questions) {
         List<List<String>> head = new ArrayList<>();
+        head.add(Collections.singletonList("姓名"));
+        head.add(Collections.singletonList("手机号"));
         List<String> questionIdList = new ArrayList<>();
         questions.stream().forEach(question -> {
             String text = question.getText();
             head.add(Collections.singletonList(text));
+            questionIdList.add(String.valueOf(question.getId()));
             Boolean needReason = question.getNeedReason() == null ? false : question.getNeedReason();
             if (needReason) {
                 head.add(Collections.singletonList(text + "（原因）"));
@@ -222,4 +285,44 @@ public class ExcelServiceImpl implements ExcelService{
          */
         private Boolean needReason;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class Answer {
+
+        /**
+         * 回答人id
+         */
+        private Integer answerUserId;
+
+        /**
+         * 问题id
+         */
+        private Integer questionId;
+
+        /**
+         * 回答文本
+         */
+        private String answer;
+
+        /**
+         * 回答原因
+         */
+        private String reason;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class AnswerUser{
+
+        private Integer id;
+
+        private String name;
+
+        private String phone;
+    }
+
+
 }

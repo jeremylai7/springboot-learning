@@ -25,5 +25,5 @@ public interface ExcelService {
 
     void dynamicExport(HttpServletResponse response) throws IOException;
 
-    void dynamicExportSecond(HttpServletResponse response);
+    void dynamicExportSecond(HttpServletResponse response) throws IOException;
 }
