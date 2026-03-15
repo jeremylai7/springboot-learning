@@ -49,6 +49,21 @@ public class ExcelController {
         excelService.userDefinedExport(response);
     }
 
+    /**
+     * 动态数据导出
+     */
+    @GetMapping("/dynamic-export")
+    public void dynamicExport(HttpServletResponse response) throws IOException {
+        excelService.dynamicExport(response);
+    }
+
+    /**
+     * 动态数据导出
+     */
+    @GetMapping("/dynamic-export-second")
+    public void dynamicExportSecond(HttpServletResponse response) throws IOException {
+        excelService.dynamicExportSecond(response);
+    }
 
 
 }

@@ -3,12 +3,18 @@ package com.test.service;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.util.IoUtils;
+import com.alibaba.excel.write.style.column.SimpleColumnWidthStyleStrategy;
+import com.alibaba.excel.write.style.row.SimpleRowHeightStyleStrategy;
 import com.test.dto.DemoExcelInput;
 import com.test.util.ExcelReadImageUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +26,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: laizc
@@ -121,9 +125,101 @@ public class ExcelServiceImpl implements ExcelService{
         bos.close();
         outputStream.flush();
         outputStream.close();
+    }
+
+    @Override
+    public void dynamicExport(HttpServletResponse response) throws IOException {
+        List<LinkedHashMap<String,Object>> mapList = new ArrayList<>();
+        LinkedHashMap<String,Object> map1 = new LinkedHashMap<>();
+        map1.put("姓名","张三");
+        map1.put("年龄",18);
+        map1.put("性别","男");
+        map1.put("学历","小学");
+        LinkedHashMap<String,Object> map2 = new LinkedHashMap<>();
+        map2.put("姓名","赵四");
+        map2.put("年龄",21);
+        map2.put("性别","男");
+        mapList.add(map1);
+        mapList.add(map2);
+        LinkedHashMap<String, Object> first = mapList.stream()
+                .max(Comparator.comparingInt(Map::size))
+                .orElse(null);
+        List<List<String>> head = first.keySet().stream()
+                .map(Collections::singletonList)
+                .collect(Collectors.toList());
+        List<String> keys = new ArrayList<>(first.keySet());
+        List<List<Object>> data = mapList.stream()
+                .map(m -> {
+                    List<Object> row = new ArrayList<>();
+                    for (String key : keys) {
+                        row.add(m.get(key) == null ? "" : m.get(key));
+                    }
+                    return row;
+                }).collect(Collectors.toList());
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        EasyExcel.write(response.getOutputStream())
+                // 这里放入动态头
+                .head(head)
+                .registerWriteHandler(new SimpleRowHeightStyleStrategy((short)80, (short)20))
+                .registerWriteHandler(new SimpleColumnWidthStyleStrategy(20))
+                .sheet("动态表单")
+                // 相同表头不合并
+                .automaticMergeHead(false)
+                .doWrite(data);
+    }
+
+
+    @Override
+    public void dynamicExportSecond(HttpServletResponse response) {
+        Questions q1 = new Questions(1,"问题1",true);
+        Questions q2 = new Questions(2,"问题2",false);
+        Questions q3 = new Questions(3,"问题3",true);
+        List<Questions> questions = Arrays.asList(q1, q2,q3);
+        Pair<List<List<String>>,List<String>> headResult = buildHead(questions);
 
 
 
 
+
+
+
+
+
+
+
+    }
+
+    private Pair<List<List<String>>,List<String>> buildHead(List<Questions> questions) {
+        List<List<String>> head = new ArrayList<>();
+        List<String> questionIdList = new ArrayList<>();
+        questions.stream().forEach(question -> {
+            String text = question.getText();
+            head.add(Collections.singletonList(text));
+            Boolean needReason = question.getNeedReason() == null ? false : question.getNeedReason();
+            if (needReason) {
+                head.add(Collections.singletonList(text + "（原因）"));
+                questionIdList.add(question.getId() + "_reason");
+            }
+        });
+        return Pair.of(head,questionIdList);
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class Questions{
+
+        private Integer id;
+
+        /**
+         * 问题文本
+         */
+        private String text;
+
+        /**
+         * 是否需要原因
+         */
+        private Boolean needReason;
     }
 }
