@@ -58,4 +58,9 @@ public class TimerController {
         Date date = new Date();
         return sdf.format(date);
     }
+
+    @GetMapping("/getData")
+    public Date getDate() {
+        return new Date();
+    }
 }
