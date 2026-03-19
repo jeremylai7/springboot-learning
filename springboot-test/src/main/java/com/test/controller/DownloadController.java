@@ -161,8 +161,6 @@ public class DownloadController {
                 keySet.add(fromObject.getString("key"));
             }
         }
-
-
     }
 
 }
