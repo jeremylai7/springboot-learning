@@ -139,6 +139,7 @@ public class ExcelServiceImpl implements ExcelService{
         map1.put("学历","小学");
         LinkedHashMap<String,Object> map2 = new LinkedHashMap<>();
         map2.put("姓名","赵四");
+        map2.put("语文","90");
         map2.put("年龄",21);
         map2.put("性别","男");
         mapList.add(map1);
@@ -146,10 +147,11 @@ public class ExcelServiceImpl implements ExcelService{
         LinkedHashMap<String, Object> first = mapList.stream()
                 .max(Comparator.comparingInt(Map::size))
                 .orElse(null);
-        List<List<String>> head = first.keySet().stream()
+        Set<String> keys = new LinkedHashSet<>();
+        keys.addAll(mapList.stream().flatMap(m -> m.keySet().stream()).collect(Collectors.toSet()));
+        List<List<String>> head = keys.stream()
                 .map(Collections::singletonList)
                 .collect(Collectors.toList());
-        List<String> keys = new ArrayList<>(first.keySet());
         List<List<Object>> data = mapList.stream()
                 .map(m -> {
                     List<Object> row = new ArrayList<>();
@@ -162,7 +164,7 @@ public class ExcelServiceImpl implements ExcelService{
         EasyExcel.write(response.getOutputStream())
                 // 这里放入动态头
                 .head(head)
-                .registerWriteHandler(new SimpleRowHeightStyleStrategy((short)80, (short)20))
+                .registerWriteHandler(new SimpleRowHeightStyleStrategy((short)30, (short)20))
                 .registerWriteHandler(new SimpleColumnWidthStyleStrategy(20))
                 .sheet("动态表单")
                 // 相同表头不合并
