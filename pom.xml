@@ -20,6 +20,7 @@
         <module>springboot-mybatis-plus</module>
         <module>springboot-elasticsearch</module>
         <module>springboot-token</module>
+        <module>springboot-ddd</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
