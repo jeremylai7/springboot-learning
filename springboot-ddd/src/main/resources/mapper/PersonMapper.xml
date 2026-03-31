@@ -3,7 +3,7 @@
 <mapper namespace="com.infrastructure.mapper.PersonMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.domain.person.entity.Person">
+    <resultMap id="BaseResultMap" type="com.infrastructure.entity.Person">
         <id column="id" property="id" />
         <result column="name" property="name" />
         <result column="age" property="age" />

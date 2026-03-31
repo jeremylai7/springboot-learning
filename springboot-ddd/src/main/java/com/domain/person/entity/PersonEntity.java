@@ -8,7 +8,7 @@ import lombok.Data;
  * @desc:
  */
 @Data
-public class Person {
+public class PersonEntity {
     private Long id;
     private String name;
     private Integer age;
