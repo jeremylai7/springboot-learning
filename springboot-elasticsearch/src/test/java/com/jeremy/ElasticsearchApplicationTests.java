@@ -16,7 +16,7 @@ import com.alibaba.fastjson2.JSON;
 import com.jeremy.model.ProductTest;
 import com.jeremy.service.ProductService;
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
