@@ -6,6 +6,7 @@ import com.application.service.ShopCartApplicationService;
 import com.domain.cart.entity.CartProductEntity;
 import com.domain.cart.entity.ShopCartEntity;
 import com.domain.cart.entity.StoreProductEntity;
+import com.domain.cart.repository.ShopCartRepository;
 import com.domain.cart.service.ShopCartDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class ShopCartServiceApplicationImpl implements ShopCartApplicationServic
 
     @Autowired
     private ShopCartDomainService shopCartDomainService;
+
+    @Autowired
+    private ShopCartRepository shopCartRepository;
 
     @Override
     public void addProduct(AddCartCommand command) {
@@ -63,8 +67,7 @@ public class ShopCartServiceApplicationImpl implements ShopCartApplicationServic
             // 添加到购物车
             cartEntity.addStoreProduct(storeProductEntity);
         });
-
-
+        shopCartRepository.save(cartEntity);
     }
 
 

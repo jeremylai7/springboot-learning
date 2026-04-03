@@ -1,5 +1,6 @@
 package com.domain.cart.repository.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.domain.cart.entity.CartProductEntity;
 import com.domain.cart.entity.ShopCartEntity;
 import com.domain.cart.entity.StoreProductEntity;
@@ -42,5 +43,14 @@ public class ShopCartRepositoryImpl implements ShopCartRepository {
         cartEntity.setUserId(userId);
         cartEntity.setStoreProducts(storeProducts);
         return null;
+    }
+
+    @Override
+    public void save(ShopCartEntity cartEntity) {
+        // 将数据保存到 redis 或者 数据库，此处省略
+        String redisKey= "SHOP_CART_" + cartEntity.getUserId();
+        String storeProducts = JSON.toJSONString(cartEntity.getStoreProducts());
+        //redisTemplate.delete(companyRedisKey);
+        //redisTemplate.opsForValue().set(redisKey, storeProducts);
     }
 }
