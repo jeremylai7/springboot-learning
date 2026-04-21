@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -23,14 +24,15 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/addUser")
-    public synchronized String addUser() {
+    public String addUser() {
         User user = new User();
         user.setName(UUID.randomUUID().toString().replace("-", ""));
-        user.setAge(18);
         user.setSubmitTime(new Date());
+        Random random = new Random();
+        // 10-20
+        int randomInt = random.nextInt(11) + 10;
+        user.setAge(randomInt);
         userService.addUser(user);
         return "ok";
     }
-
-
 }
