@@ -2,6 +2,7 @@ package com.test;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import java.util.*;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
  * @date: created in 2024/7/7
  * @desc:
  **/
+@Slf4j
 public class RankTest {
 
     @Test
@@ -115,4 +117,74 @@ public class RankTest {
         private String createTimeStr;
 
     }
+
+    @Test
+    public void test2() {
+        RankDetailLog detailLog7 = new RankDetailLog("C", 1, "7月4日");
+        RankDetailLog detailLog8 = new RankDetailLog("A", 2, "7月4日");
+        RankDetailLog detailLog9 = new RankDetailLog("B", 3, "7月4日");
+        RankDetailLog detailLog1 = new RankDetailLog("D", 1, "7月2日");
+        RankDetailLog detailLog2 = new RankDetailLog("B", 2, "7月2日");
+        RankDetailLog detailLog3 = new RankDetailLog("C", 3, "7月2日");
+        RankDetailLog detailLog4 = new RankDetailLog("D", 1, "7月3日");
+        RankDetailLog detailLog5 = new RankDetailLog("C", 2, "7月3日");
+        RankDetailLog detailLog6 = new RankDetailLog("A", 3, "7月3日");
+
+        List<RankDetailLog> detailLogList = new ArrayList<>();
+        detailLogList.add(detailLog1);
+        detailLogList.add(detailLog2);
+        detailLogList.add(detailLog3);
+        detailLogList.add(detailLog4);
+        detailLogList.add(detailLog5);
+        detailLogList.add(detailLog6);
+        detailLogList.add(detailLog7);
+        detailLogList.add(detailLog8);
+        detailLogList.add(detailLog9);
+        // 按日期分组并排序
+        Map<String, List<RankDetailLog>> sortedCreateTimeMap = detailLogList.stream()
+                .collect(Collectors.groupingBy(RankDetailLog::getCreateTimeStr, () -> new TreeMap<>(Comparator.reverseOrder()), Collectors.toList()));
+
+        // 第一天
+        boolean firstDay = true;
+        // 连续商品数
+        Set<String> threeProductSet = new HashSet<>();
+        Map<String,Integer> threeProductMap = new HashMap<>();
+        // 统计前三天的数据
+        for (Map.Entry<String, List<RankDetailLog>> entry : sortedCreateTimeMap.entrySet()) {
+            List<RankDetailLog> rankDetailLogList = entry.getValue();
+            if (!rankDetailLogList.isEmpty()) {
+                // 只取前三
+                rankDetailLogList = rankDetailLogList.subList(0,Math.min(3,rankDetailLogList.size()));
+
+                if (!firstDay) {
+                    // 第二天以及以后
+                    for (RankDetailLog detailLog : rankDetailLogList) {
+                        String product = detailLog.getProduct();
+                        if (threeProductSet.contains(product)) {
+                            threeProductMap.put(product,threeProductMap.get(product) + 1);
+                        }
+                    }
+                    Set<String> currentTopThreeProduct = rankDetailLogList.stream().map(RankDetailLog::getProduct)
+                            .collect(Collectors.toCollection(LinkedHashSet::new));
+                    threeProductSet.retainAll(currentTopThreeProduct);
+                } else {
+                    // 第一天统计
+                    for (RankDetailLog detailLog : rankDetailLogList) {
+                        String product = detailLog.getProduct();
+                        threeProductMap.put(product,1);
+                    }
+                    threeProductSet = rankDetailLogList.stream().map(RankDetailLog::getProduct)
+                            .collect(Collectors.toCollection(LinkedHashSet::new));
+                    firstDay = false;
+                }
+            }
+        }
+        System.out.println("连续三天上榜商品：" + threeProductMap);
+
+
+
+
+    }
+
+
 }
