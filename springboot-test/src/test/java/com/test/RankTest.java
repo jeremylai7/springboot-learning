@@ -155,7 +155,6 @@ public class RankTest {
             if (!rankDetailLogList.isEmpty()) {
                 // 只取前三
                 rankDetailLogList = rankDetailLogList.subList(0,Math.min(3,rankDetailLogList.size()));
-
                 if (!firstDay) {
                     // 第二天以及以后
                     for (RankDetailLog detailLog : rankDetailLogList) {
