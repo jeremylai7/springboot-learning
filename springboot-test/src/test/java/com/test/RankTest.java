@@ -178,7 +178,7 @@ public class RankTest {
                 }
             }
         }
-        System.out.println("连续三天上榜商品：" + threeProductMap);
+        System.out.println("前三上榜商品：" + threeProductMap);
 
 
 
