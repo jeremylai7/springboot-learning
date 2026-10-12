@@ -3,6 +3,7 @@ package com.test.cycledepend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author: laizc
@@ -16,7 +17,11 @@ public class TAService {
     private TBService tbService;
 
     //加了就报错
+    //
+
+
     //@Async
+    //@Transactional(rollbackFor = Exception.class)
     public void doSomethingAsync() {
         // do something
     }
