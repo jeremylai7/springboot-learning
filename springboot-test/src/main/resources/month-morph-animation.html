@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Month Morph Animation</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    canvas {
+      display: block;
+      width: min(750px, 100vw);
+      height: auto;
+      aspect-ratio: 750 / 400;
+      background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+<canvas id="month-canvas" width="750" height="400" aria-label="月份文字变形动画"></canvas>
+
+<script>
+  (() => {
+    const months = [
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June"
+    ];
+
+    const WIDTH = 750;
+    const HEIGHT = 400;
+    const FONT_SIZE = 72;
+
+    // 原视频的切换很短，完整单词停留时间更长。
+    const TRANSITION_DURATION = 230;
+    const HOLD_DURATION = 420;
+
+    const canvas = document.getElementById("month-canvas");
+    const context = canvas.getContext("2d");
+
+    let monthIndex = 0;
+    let animationFrameId = null;
+    let holdTimerId = null;
+
+    function initializeCanvas() {
+      const pixelRatio = Math.max(1, window.devicePixelRatio || 1);
+
+      canvas.width = WIDTH * pixelRatio;
+      canvas.height = HEIGHT * pixelRatio;
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+      drawCompleteWord(months[monthIndex]);
+    }
+
+    function setFont() {
+      context.font = `700 ${FONT_SIZE}px Arial, Helvetica, sans-serif`;
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillStyle = "#000000";
+    }
+
+    /**
+     * 按照完整单词的前缀宽度计算每个字符的中心位置。
+     * 相比直接累加单个字符宽度，可以保留更多字体字距信息。
+     */
+    function layoutWord(word) {
+      setFont();
+
+      const totalWidth = context.measureText(word).width;
+      const startX = (WIDTH - totalWidth) / 2;
+
+      return Array.from(word).map((character, index) => {
+        const beforeWidth = context.measureText(
+          word.slice(0, index)
+        ).width;
+
+        const afterWidth = context.measureText(
+          word.slice(0, index + 1)
+        ).width;
+
+        return {
+          character,
+          index,
+          x: startX + (beforeWidth + afterWidth) / 2,
+          y: HEIGHT / 2
+        };
+      });
+    }
+
+    /**
+     * 匹配两个单词中相同的字符。
+     * 字符重复时，优先选择移动距离最短的组合。
+     */
+    function matchGlyphs(fromGlyphs, toGlyphs) {
+      const matches = [];
+      const usedFromIndexes = new Set();
+      const usedToIndexes = new Set();
+
+      const characters = new Set([
+        ...fromGlyphs.map(glyph => glyph.character.toLowerCase()),
+        ...toGlyphs.map(glyph => glyph.character.toLowerCase())
+      ]);
+
+      characters.forEach(character => {
+        const candidates = [];
+
+        fromGlyphs.forEach((fromGlyph, fromIndex) => {
+          toGlyphs.forEach((toGlyph, toIndex) => {
+            if (
+              fromGlyph.character.toLowerCase() === character &&
+              toGlyph.character.toLowerCase() === character
+            ) {
+              candidates.push({
+                fromIndex,
+                toIndex,
+                distance: Math.abs(fromGlyph.x - toGlyph.x)
+              });
+            }
+          });
+        });
+
+        candidates.sort((left, right) => {
+          return left.distance - right.distance;
+        });
+
+        candidates.forEach(candidate => {
+          if (
+            usedFromIndexes.has(candidate.fromIndex) ||
+            usedToIndexes.has(candidate.toIndex)
+          ) {
+            return;
+          }
+
+          usedFromIndexes.add(candidate.fromIndex);
+          usedToIndexes.add(candidate.toIndex);
+          matches.push(candidate);
+        });
+      });
+
+      return {
+        matches,
+        usedFromIndexes,
+        usedToIndexes
+      };
+    }
+
+    function clamp(value, minimum = 0, maximum = 1) {
+      return Math.max(minimum, Math.min(maximum, value));
+    }
+
+    function lerp(from, to, progress) {
+      return from + (to - from) * progress;
+    }
+
+    function smoothstep(value) {
+      const progress = clamp(value);
+      return progress * progress * (3 - 2 * progress);
+    }
+
+    /**
+     * 欠阻尼弹簧。
+     * 字符会短暂冲过目标位置，然后快速回弹。
+     */
+    function spring(value) {
+      const progress = clamp(value);
+
+      if (progress === 1) {
+        return 1;
+      }
+
+      return (
+        1 -
+        Math.exp(-7.5 * progress) *
+        Math.cos(11 * progress)
+      );
+    }
+
+    /**
+     * 字母间加入少量延迟，让整个单词不是同时平滑移动。
+     */
+    function getGlyphProgress(progress, index) {
+      const delay = Math.min(index * 0.035, 0.25);
+
+      return clamp(
+        (progress - delay) / (1 - delay)
+      );
+    }
+
+    function drawGlyph(glyph, options = {}) {
+      const {
+        x = glyph.x,
+        y = glyph.y,
+        alpha = 1,
+        scaleX = 1,
+        scaleY = 1
+      } = options;
+
+      if (alpha <= 0) {
+        return;
+      }
+
+      context.save();
+      context.translate(x, y);
+      context.scale(scaleX, scaleY);
+      context.globalAlpha = clamp(alpha);
+
+      setFont();
+      context.fillText(glyph.character, 0, 0);
+
+      context.restore();
+    }
+
+    function drawCompleteWord(word) {
+      context.clearRect(0, 0, WIDTH, HEIGHT);
+
+      layoutWord(word).forEach(glyph => {
+        drawGlyph(glyph);
+      });
+    }
+
+    function renderTransition(
+      fromWord,
+      toWord,
+      rawProgress,
+      opacity = 1
+    ) {
+      const progress = clamp(rawProgress);
+      const fromGlyphs = layoutWord(fromWord);
+      const toGlyphs = layoutWord(toWord);
+
+      const {
+        matches,
+        usedFromIndexes,
+        usedToIndexes
+      } = matchGlyphs(fromGlyphs, toGlyphs);
+
+      // 两个单词中都存在的字符，直接移动到新的位置。
+      matches.forEach(match => {
+        const fromGlyph = fromGlyphs[match.fromIndex];
+        const toGlyph = toGlyphs[match.toIndex];
+
+        const localProgress = getGlyphProgress(
+          progress,
+          match.toIndex
+        );
+
+        const movement = spring(localProgress);
+        const pulse = Math.sin(localProgress * Math.PI);
+
+        drawGlyph(toGlyph, {
+          x: lerp(fromGlyph.x, toGlyph.x, movement),
+          y: lerp(fromGlyph.y, toGlyph.y, movement),
+          alpha: opacity,
+          scaleX: 1 + pulse * 0.045,
+          scaleY: 1 - pulse * 0.065
+        });
+      });
+
+      // 旧单词中不再需要的字符，向两侧弹出并消失。
+      fromGlyphs.forEach((glyph, index) => {
+        if (usedFromIndexes.has(index)) {
+          return;
+        }
+
+        const localProgress = getGlyphProgress(progress, index);
+        const movement = spring(localProgress);
+        const direction = glyph.x < WIDTH / 2 ? -1 : 1;
+        const pulse = Math.sin(localProgress * Math.PI);
+
+        drawGlyph(glyph, {
+          x: glyph.x + direction * 28 * movement,
+          y: glyph.y - pulse * 7,
+          alpha:
+            (1 - smoothstep(localProgress * 1.35)) *
+            opacity,
+          scaleX: 1 - localProgress * 0.18,
+          scaleY: 1 + localProgress * 0.12
+        });
+      });
+
+      // 新单词中新增的字符，从附近位置弹入。
+      toGlyphs.forEach((glyph, index) => {
+        if (usedToIndexes.has(index)) {
+          return;
+        }
+
+        const localProgress = getGlyphProgress(progress, index);
+        const movement = spring(localProgress);
+        const direction = glyph.x < WIDTH / 2 ? -1 : 1;
+        const pulse = Math.sin(localProgress * Math.PI);
+        const startX = glyph.x - direction * 34;
+
+        drawGlyph(glyph, {
+          x: lerp(startX, glyph.x, movement),
+          y: glyph.y + pulse * 6,
+          alpha:
+            smoothstep(localProgress * 1.5) *
+            opacity,
+          scaleX: 0.78 + movement * 0.22,
+          scaleY: 1.16 - movement * 0.16
+        });
+      });
+    }
+
+    function drawTransitionFrame(
+      fromWord,
+      toWord,
+      progress
+    ) {
+      context.clearRect(0, 0, WIDTH, HEIGHT);
+
+      /*
+       * 使用几个离散的历史位置产生灰色拖影。
+       * 不使用 blur，因为原视频更接近多重清晰残影。
+       */
+      renderTransition(
+        fromWord,
+        toWord,
+        progress - 0.16,
+        0.055
+      );
+
+      renderTransition(
+        fromWord,
+        toWord,
+        progress - 0.10,
+        0.095
+      );
+
+      renderTransition(
+        fromWord,
+        toWord,
+        progress - 0.05,
+        0.15
+      );
+
+      renderTransition(
+        fromWord,
+        toWord,
+        progress,
+        1
+      );
+    }
+
+    function playNextTransition() {
+      const fromWord = months[monthIndex];
+      const nextMonthIndex =
+        (monthIndex + 1) % months.length;
+      const toWord = months[nextMonthIndex];
+      const startTime = performance.now();
+
+      function drawFrame(currentTime) {
+        const progress = clamp(
+          (currentTime - startTime) /
+          TRANSITION_DURATION
+        );
+
+        if (progress < 1) {
+          drawTransitionFrame(
+            fromWord,
+            toWord,
+            progress
+          );
+
+          animationFrameId =
+            requestAnimationFrame(drawFrame);
+
+          return;
+        }
+
+        monthIndex = nextMonthIndex;
+
+        // 落位后只画一次完整单词，避免拖影停留。
+        drawCompleteWord(toWord);
+
+        holdTimerId = window.setTimeout(
+          playNextTransition,
+          HOLD_DURATION
+        );
+      }
+
+      animationFrameId =
+        requestAnimationFrame(drawFrame);
+    }
+
+    function restartAnimation() {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+      }
+
+      if (holdTimerId !== null) {
+        clearTimeout(holdTimerId);
+      }
+
+      initializeCanvas();
+
+      holdTimerId = window.setTimeout(
+        playNextTransition,
+        HOLD_DURATION
+      );
+    }
+
+    window.addEventListener("resize", restartAnimation);
+
+    restartAnimation();
+  })();
+</script>
+</body>
+</html>
