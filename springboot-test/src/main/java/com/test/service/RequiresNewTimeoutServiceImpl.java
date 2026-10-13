@@ -4,6 +4,7 @@ import com.test.dao.UserDao;
 import com.test.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author: laizc
@@ -19,15 +20,19 @@ public class RequiresNewTimeoutServiceImpl implements RequiresNewTimeoutService 
     private UserDao userDao;
 
 
+    /**
+     * 需求点：1、更新订单审核状态，2,3步骤报错，不能影响 1步骤。
+     * 2,3步骤又是一起的。一起失败，一起成功
+     */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void orderPass() {
-        // 更新订单审核状态
+        // 1、更新订单审核状态
         updateOrderAuditStatus(id);
-        // 添加入库
+        // 2、添加入库
         addPutInStorage(id);
-        // 更新订单入库状态
+        // 3、更新订单入库状态
         updateOrderStorageStatus(id);
-
     }
 
 
@@ -43,13 +48,12 @@ public class RequiresNewTimeoutServiceImpl implements RequiresNewTimeoutService 
         if (id%2 == 0) {
             throw new RuntimeException("远程调用错误");
         }
-
-
-
     }
 
     private void updateOrderStorageStatus(Long id) {
-
+        User user = userDao.selectByPrimary(id);
+        user.setName(user.getName() + "@");
+        userDao.updateByPrimaryKeySelective(user);
     }
 
 
